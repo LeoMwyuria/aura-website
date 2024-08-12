@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAuth, signOut } from "firebase/auth";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from 'react-router-dom';
 import 'toastify-js/src/toastify.css';
 import Toastify from 'toastify-js';
@@ -7,6 +8,7 @@ import ProfilePictureUpload from '../../components/ProfilePictureUpload/ProfileP
 import Button from '../../components/Button/Button';
 
 const AdminPanel: React.FC = () => {
+  const [username, setUsername] = useState<string | null>(null); 
   const [usernameToUpdate, setUsernameToUpdate] = useState<string>(''); 
   const [comment, setComment] = useState<string>('');
   const [points, setPoints] = useState<number>(0);
@@ -16,7 +18,24 @@ const AdminPanel: React.FC = () => {
     const auth = getAuth();
     const user = auth.currentUser;
 
-    if (!user) {
+    if (user) {
+      const db = getDatabase();
+      const userRef = ref(db, 'users/' + user.uid);
+
+      console.log("User ID:", user.uid);
+
+      onValue(userRef, (snapshot) => {
+        const data = snapshot.val();
+        console.log("User Data:", data); 
+
+        if (data && data.username) {
+          setUsername(data.username); 
+        } else {
+          console.error("No username found for this user.");
+          setUsername('No username found');
+        }
+      });
+    } else {
       console.error("No authenticated user found.");
       navigate('/'); 
     }
@@ -79,10 +98,15 @@ const AdminPanel: React.FC = () => {
   };
 
   return (
-    <div className="border p-5 w-screen h-screen flex flex-row">
+    <div className=" border p-5 w-screen h-screen flex flex-row">
       <div className="border w-[20%] p-5 bg-custom-blue">
         <div className="flex flex-column justify-between items-center">
           <ProfilePictureUpload />
+          <div>
+            <p className='font-semibold mr-9'>
+              {username ? username : 'Loading...'}
+            </p>
+          </div>
         </div>
         <button
           onClick={handleSignOut}
@@ -98,35 +122,35 @@ const AdminPanel: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="w-[80%] border border-black p-4">
-        <div className='border border-black flex flex-row justify-between'>
-        <div className='bg-white p-2'>
+      <div className="w-[80%]  p-4  flex flex-col items-center justify-center">
+        <div className=' flex flex-row justify-between border w-[80%] '>
+        <div className='bg-gray-200 p-2  border-b border-b-gray-500'>
         <span className="w-1/4 font-semibold">Target Username </span>
         <input
           type="text"
           value={usernameToUpdate}
           onChange={(e) => setUsernameToUpdate(e.target.value)}
-          className="p-2 w-[60%] mt-2"
+          className="p-2 w-[60%] mt-2 bg-gray-200"
           placeholder="Enter the username"
         />
         </div>
-        <div className='bg-white p-2'>
+        <div className='bg-gray-200 p-2 border-b border-b-gray-500'>
         <span className='font-semibold'>Comment </span>
         <input
           type="text"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          className=" p-2 w-[70%] mt-2  "
+          className=" p-2 w-[70%] mt-2 bg-gray-200 "
           placeholder="Enter a comment"
         />
         </div>
-        <div className='bg-white p-2'>
+        <div className='bg-gray-200 p-2 border-b border-b-gray-500'>
         <span className='font-semibold'>Points </span>
         <input
           type="number"
           value={points}
           onChange={(e) => setPoints(Number(e.target.value))}
-          className="p-2 w-[70%] mt-2"
+          className="p-2 w-[70%] mt-2 bg-gray-200"
           placeholder="Enter the aura points"
         />
         </div>
