@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import Photo from '../../assets/vardana-lomi.png';
 import { app } from '../../firebase';
-
+import 'toastify-js/src/toastify.css';
+import Toastify from 'toastify-js';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -16,15 +17,34 @@ const Login: React.FC = () => {
             const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
             const user = userCredential.user;
 
-            if (user.email === 'lukavardanidze@gmail.com') {
-                navigate('/adminpanel');
-            } else {
-                navigate('/dashboard');
-            }
+            setTimeout(() => {
+                if (user.email === 'lukavardanidze@gmail.com') {
+                    navigate('/adminpanel');
+                } else {
+                    navigate('/dashboard');
+                }
+            }, 500);
+
+            Toastify({
+                text: "Login successful! Redirecting...",
+                duration: 1700,
+                backgroundColor: "black",
+                stopOnFocus: true
+            }).showToast();
 
             setLoginError(null);
         } catch (error: any) {
-            console.error('Error logging in:', error.message);
+            const errorMessage = (error instanceof Error) ? error.message : 'An unknown error occurred';
+            console.error('Error logging in:', errorMessage);
+
+            
+            Toastify({
+                text: `Error: ${errorMessage}`,
+                duration: 3000,
+                backgroundColor: "black",
+                stopOnFocus: true
+            }).showToast();
+
             setLoginError('Your email or password is incorrect');
         } finally {
             setSubmitting(false);

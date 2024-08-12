@@ -19,14 +19,16 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0",
+    "react-toastify": "^10.0.5",
     "tailwindcss": "^3.4.9",
-    "toastify": "^2.0.1",
+    "toastify-js": "^1.12.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@types/toastify-js": "^1.12.3",
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^9.8.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",

@@ -5,19 +5,20 @@ import picture from '../../assets/vardana-lomi.png';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 import { app } from '../../firebase';
+import 'toastify-js/src/toastify.css';
+import Toastify from 'toastify-js';
+
+
 
 interface FormValues {
     email: string;
     password: string;
     repeatPassword: string;
+    username: string; 
 }
 
 const SignUp: React.FC = () => {
     const navigate = useNavigate();
-
-    const toLoginClick = () => {
-        navigate("/");
-    };
 
     const handleSignUp = async (values: FormValues) => {
         try {
@@ -26,27 +27,52 @@ const SignUp: React.FC = () => {
             const user = userCredential.user;
             console.log('User registered successfully:', user);
             const db = getDatabase(app);
-            navigate("/dashboard"); 
+    
             await set(ref(db, 'users/' + user.uid), {
                 email: user.email,
-            })
+                username: values.username, 
+            });
+    
+            Toastify({
+                text: "Registration successful! Redirecting...",
+                duration: 2000,
+                backgroundColor: "black",
+                stopOnFocus: true
+            }).showToast();
+            setTimeout(() => {
+                navigate("/dashboard"); 
+            }, 300);
         } catch (error) {
             const errorMessage = (error instanceof Error) ? error.message : 'An unknown error occurred';
             console.error('Error registering user:', errorMessage);
+    
+            Toastify({
+                text: `Error: ${errorMessage}`,
+                duration: 3000,
+                backgroundColor: "black",
+                stopOnFocus: true
+            }).showToast();
         }
     };
+    
 
     return (
         <div className="bg-gray-200 ml-auto mr-auto mt-[5%] p-10 w-[80%] h-[80vh] flex flex-row items-center justify-between">
             <div className="w-[50%]">
                 <img className='w-full' src={picture} alt="Sign Up" />
             </div>
-            <div className="bg-white shadow-lg h-[90%] w-[40%] flex flex-col justify-center p-8 rounded-md">
+            <div className="bg-white shadow-lg h-full w-[40%] flex flex-col justify-center p-8 rounded-md">
                 <h2 className="text-3xl mb-8">Sign Up</h2>
                 <Formik
-                    initialValues={{ email: '', password: '', repeatPassword: '' }}
+                    initialValues={{ email: '', password: '', repeatPassword: '', username: '' }} 
                     validate={values => {
                         const errors: Partial<FormValues> = {};
+                        if (!values.username) {
+                            errors.username = 'Required';
+                        }
+                        if(values.username.length > 20){
+                            errors.username = 'username must be less than 20 characters'
+                        }
                         if (!values.email) {
                             errors.email = 'Required';
                         } else if (!/^\S+@\S+\.\S+$/.test(values.email)) {
@@ -67,6 +93,16 @@ const SignUp: React.FC = () => {
                     onSubmit={handleSignUp}
                 >
                     <Form className='flex flex-col'>
+                        <label className="mb-3" htmlFor="username">Username</label>
+                        <Field
+                            id="username"
+                            type="text"
+                            name="username"
+                            placeholder="Username"
+                            className="mb-3 p-3 border border-gray-300 rounded"
+                        />
+                        <ErrorMessage name="username" component="div" className="text-red-500 mb-4" />
+
                         <label className="mb-3" htmlFor="email">Email Address</label>
                         <Field
                             id="email"
@@ -108,7 +144,7 @@ const SignUp: React.FC = () => {
                 <div className='mt-4'>
                     Already Have An Account?{' '}
                     <span
-                        onClick={toLoginClick}
+                        onClick={() => navigate("/")}
                         className="text-purple-500 cursor-pointer"
                     >
                         Login

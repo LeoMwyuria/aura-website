@@ -6,12 +6,12 @@ import { app } from '../firebase';
 interface PrivateRouteProps {
     element: React.ReactElement;
     redirectPath?: string;
-    allowedEmail?: string; // Add allowedEmail to control access
+    allowedEmail?: string;
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element, redirectPath = '/', allowedEmail }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-    const [isAllowed, setIsAllowed] = useState<boolean>(false); // State to check email permission
+    const [isAllowed, setIsAllowed] = useState<boolean>(true); 
     const navigate = useNavigate();
     const auth = getAuth(app);
 
@@ -19,11 +19,11 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element, redirectPath = '/'
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             if (user) {
                 setIsAuthenticated(true);
-                if (allowedEmail && user.email === allowedEmail) {
-                    setIsAllowed(true);
-                } else if (allowedEmail) {
-                    setIsAllowed(false);
-                    navigate(redirectPath);
+                if (allowedEmail) {
+                    setIsAllowed(user.email === allowedEmail);
+                    if (user.email !== allowedEmail) {
+                        navigate(redirectPath);
+                    }
                 }
             } else {
                 setIsAuthenticated(false);
@@ -35,10 +35,10 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element, redirectPath = '/'
     }, [auth, navigate, redirectPath, allowedEmail]);
 
     if (isAuthenticated === null) {
-        return <div>Loading...</div>; // Or a loading spinner
+        return <div>Loading...</div>; 
     }
 
-    return isAllowed ? element : null;
+    return isAuthenticated && isAllowed ? element : null;
 };
 
 export default PrivateRoute;

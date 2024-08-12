@@ -4,9 +4,9 @@ import App from './App.tsx';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute.tsx';
-import AdminPanel from './components/AdminPanel/AdminPanel.tsx';
-import SignUp from './components/SignUp/SignUp.tsx';
-import Login from './components/Login/Login.tsx';
+import AdminPanel from './pages/AdminPanel/AdminPanel.tsx';
+import SignUp from './pages/SignUp/SignUp.tsx';
+import Login from './pages/Login/Login.tsx';
 
 const router = createBrowserRouter([
   {
@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       <PrivateRoute
         element={<AdminPanel />}
         redirectPath="/" 
-        allowedEmail="lukavardanidze@gmail.com" // Pass the allowed email
+        allowedEmail="lukavardanidze@gmail.com" 
       />
     )
   }
