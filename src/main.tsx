@@ -32,7 +32,7 @@ const router = createBrowserRouter([
       <PrivateRoute
         element={<AdminPanel />}
         redirectPath="/" 
-        allowedEmail="lukavardanidze@gmail.com" 
+        allowedEmail="admin@gmail.com" 
       />
     )
   }

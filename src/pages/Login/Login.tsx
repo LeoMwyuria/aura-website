@@ -16,35 +16,34 @@ const Login: React.FC = () => {
             const auth = getAuth(app);
             const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
             const user = userCredential.user;
-
+    
             setTimeout(() => {
-                if (user.email === 'lukavardanidze@gmail.com') {
+                if (user.email === 'admin@gmail.com') {
                     navigate('/adminpanel');
                 } else {
                     navigate('/dashboard');
                 }
-            }, 500);
-
+            }, 300);
+    
             Toastify({
                 text: "Login successful! Redirecting...",
                 duration: 1700,
                 backgroundColor: "black",
                 stopOnFocus: true
             }).showToast();
-
+    
             setLoginError(null);
         } catch (error: any) {
             const errorMessage = (error instanceof Error) ? error.message : 'An unknown error occurred';
             console.error('Error logging in:', errorMessage);
-
-            
+    
             Toastify({
                 text: `Error: ${errorMessage}`,
                 duration: 3000,
                 backgroundColor: "black",
                 stopOnFocus: true
             }).showToast();
-
+    
             setLoginError('Your email or password is incorrect');
         } finally {
             setSubmitting(false);
@@ -52,11 +51,11 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div className="bg-gray-200 ml-auto mr-auto mt-[5%] p-10 w-[80%] h-[80vh] flex flex-row items-center justify-between">
+        <div className="bg-gray-200 ml-auto mr-auto mt-5 p-10 w-[80%] min-h-[80vh] flex flex-row items-center justify-between">
             <div className="w-[50%]">
                 <img className='w-full' src={Photo} alt="Vardana Lomi" />
             </div>
-            <div className="bg-white shadow-lg h-[75%] w-[40%] flex flex-col justify-center p-8 rounded-md">
+            <div className="bg-white shadow-lg w-[40%] flex flex-col justify-center p-8 rounded-md">
                 <h2 className="text-3xl mb-8">Login</h2>
                 <Formik
                     initialValues={{ email: '', password: '' }}
@@ -108,7 +107,7 @@ const Login: React.FC = () => {
                         </Form>
                     )}
                 </Formik>
-                <p>Don't Have An Account? <span className="text-purple-500 cursor-pointer" onClick={() => navigate('/signup')}>Sign Up</span></p>
+                <p className="mt-4">Don't Have An Account? <span className="text-purple-500 cursor-pointer" onClick={() => navigate('/signup')}>Sign Up</span></p>
             </div>
         </div>
     );

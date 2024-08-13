@@ -2,13 +2,11 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import picture from '../../assets/vardana-lomi.png'; 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
 import { app } from '../../firebase';
-import 'toastify-js/src/toastify.css';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getDatabase, ref, set, get } from "firebase/database";
 import Toastify from 'toastify-js';
-
-
+import 'toastify-js/src/toastify.css';
 
 interface FormValues {
     email: string;
@@ -21,27 +19,51 @@ const SignUp: React.FC = () => {
     const navigate = useNavigate();
 
     const handleSignUp = async (values: FormValues) => {
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        
         try {
-            const auth = getAuth(app);
+            
+            const usernameRef = ref(db, `usernames/${values.username}`);
+            const snapshot = await get(usernameRef);
+    
+            if (snapshot.exists()) {
+                Toastify({
+                    text: "Username already taken. Please choose a different one.",
+                    duration: 3000,
+                    backgroundColor: "red",
+                    stopOnFocus: true
+                }).showToast();
+                return;
+            }
+    
+            
             const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
             const user = userCredential.user;
             console.log('User registered successfully:', user);
-            const db = getDatabase(app);
     
+            
             await set(ref(db, 'users/' + user.uid), {
                 email: user.email,
                 username: values.username, 
             });
     
+            
+            await set(usernameRef, true);
+    
+            
             Toastify({
                 text: "Registration successful! Redirecting...",
                 duration: 2000,
                 backgroundColor: "black",
                 stopOnFocus: true
             }).showToast();
+    
+            
             setTimeout(() => {
-                navigate("/dashboard"); 
-            }, 300);
+                window.location.href = "/dashboard"; 
+            }, 2000);
+    
         } catch (error) {
             const errorMessage = (error instanceof Error) ? error.message : 'An unknown error occurred';
             console.error('Error registering user:', errorMessage);
@@ -49,19 +71,18 @@ const SignUp: React.FC = () => {
             Toastify({
                 text: `Error: ${errorMessage}`,
                 duration: 3000,
-                backgroundColor: "black",
+                backgroundColor: "red",
                 stopOnFocus: true
             }).showToast();
         }
     };
-    
 
     return (
-        <div className="bg-gray-200 ml-auto mr-auto mt-[5%] p-10 w-[80%] h-[80vh] flex flex-row items-center justify-between">
+        <div className="bg-gray-200 ml-auto mr-auto mt-5 p-10 w-[80%] min-h-[80vh] flex flex-row items-center justify-between">
             <div className="w-[50%]">
                 <img className='w-full' src={picture} alt="Sign Up" />
             </div>
-            <div className="bg-white shadow-lg h-full w-[40%] flex flex-col justify-center p-8 rounded-md">
+            <div className="bg-white shadow-lg w-[40%] flex flex-col justify-center p-8 rounded-md">
                 <h2 className="text-3xl mb-8">Sign Up</h2>
                 <Formik
                     initialValues={{ email: '', password: '', repeatPassword: '', username: '' }} 
@@ -71,7 +92,7 @@ const SignUp: React.FC = () => {
                             errors.username = 'Required';
                         }
                         if(values.username.length > 20){
-                            errors.username = 'username must be less than 20 characters'
+                            errors.username = 'Username must be less than 20 characters';
                         }
                         if (!values.email) {
                             errors.email = 'Required';

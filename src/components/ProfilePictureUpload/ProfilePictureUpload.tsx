@@ -7,11 +7,11 @@ import { getAuth } from 'firebase/auth';
 import Toastify from 'toastify-js';
 import Modal from '../Modal/Modal';
 
-
 const ProfilePictureUpload: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false); // New state for image modal
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -69,7 +69,8 @@ const ProfilePictureUpload: React.FC = () => {
       <img
         src={imageUrl || defaultProfilePic}
         alt="Profile"
-        className="w-24 h-24 mt-4 rounded-full"
+        className="w-24 h-24 mt-4 rounded-full cursor-pointer"
+        onClick={() => setIsImageModalOpen(true)} // Open image modal on click
       />
       <button
         onClick={() => setIsModalOpen(true)}
@@ -91,6 +92,17 @@ const ProfilePictureUpload: React.FC = () => {
         >
           Upload
         </button>
+      </Modal>
+
+      
+      <Modal isOpen={isImageModalOpen} onClose={() => setIsImageModalOpen(false)}>
+        <div className="flex justify-center items-center h-full">
+          <img
+            src={imageUrl || defaultProfilePic}
+            alt="Profile"
+            className="max-w-full max-h-full rounded"
+          />
+        </div>
       </Modal>
     </div>
   );
