@@ -11,7 +11,7 @@ const ProfilePictureUpload: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false); // New state for image modal
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -46,21 +46,27 @@ const ProfilePictureUpload: React.FC = () => {
       try {
         await uploadBytes(fileRef, file);
         const url = await getDownloadURL(fileRef);
-        setImageUrl(url); 
-        setIsModalOpen(false); 
+        setImageUrl(url);
+        setIsModalOpen(false);
         const userDocRef = doc(firestore, `users/${user.uid}`);
         await setDoc(userDocRef, { profilePicture: url }, { merge: true });
         setTimeout(() => {
-            Toastify({
-                text: "Profile Picture Changed Successfully!",
-                duration: 2200,
-                backgroundColor: "black",
-                stopOnFocus: true
-            }).showToast();
+          Toastify({
+            text: "Profile Picture Changed Successfully!",
+            duration: 2200,
+            backgroundColor: "black",
+            stopOnFocus: true
+          }).showToast();
         }, 500);
       } catch (error) {
         console.error("Upload failed:", error);
       }
+    }
+  };
+
+  const handleImageClick = () => {
+    if (imageUrl !== defaultProfilePic) {
+      setIsImageModalOpen(true);
     }
   };
 
@@ -69,8 +75,8 @@ const ProfilePictureUpload: React.FC = () => {
       <img
         src={imageUrl || defaultProfilePic}
         alt="Profile"
-        className="w-24 h-24 mt-4 rounded-full cursor-pointer"
-        onClick={() => setIsImageModalOpen(true)} // Open image modal on click
+        className={`w-24 h-24 mt-4 rounded-full cursor-pointer ${imageUrl === defaultProfilePic ? 'opacity-50 cursor-not-allowed' : ''}`}
+        onClick={handleImageClick}
       />
       <button
         onClick={() => setIsModalOpen(true)}
@@ -94,13 +100,12 @@ const ProfilePictureUpload: React.FC = () => {
         </button>
       </Modal>
 
-      
       <Modal isOpen={isImageModalOpen} onClose={() => setIsImageModalOpen(false)}>
-        <div className="flex justify-center items-center h-full">
+        <div className="flex justify-center items-center h-full p-4">
           <img
             src={imageUrl || defaultProfilePic}
             alt="Profile"
-            className="max-w-full max-h-full rounded"
+            className="max-w-full max-h-full object-contain rounded-lg"
           />
         </div>
       </Modal>

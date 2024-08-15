@@ -14,7 +14,8 @@ const App: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('https://analog-pilot-432306-v2.oa.r.appspot.com/judgment');
+      const usernameToUpdate = 'aaa'
+      const response = await fetch(`https://analog-pilot-432306-v2.oa.r.appspot.com/api/users/${usernameToUpdate}/history`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

@@ -93,6 +93,11 @@ const AdminPanel: React.FC = () => {
         backgroundColor: "green",
         stopOnFocus: true
       }).showToast();
+      
+      
+      setUsernameToUpdate('');
+      setComment('');
+      setPoints(0);
     } catch (error) {
       console.error('Error:', error);
       Toastify({
@@ -135,6 +140,15 @@ const AdminPanel: React.FC = () => {
       }).showToast();
     }
   };
+
+  useEffect(() => {
+    
+    if (adminAction === AdminAction.UpdateAura) {
+      setUsernameToUpdate('');
+      setComment('');
+      setPoints(0);
+    }
+  }, [adminAction]);
 
   return (
     <div className="border p-5 w-screen h-screen flex flex-row">
