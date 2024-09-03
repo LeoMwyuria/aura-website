@@ -7,12 +7,23 @@ import PrivateRoute from './components/PrivateRoute.tsx';
 import AdminPanel from './pages/AdminPanel/AdminPanel.tsx';
 import SignUp from './pages/SignUp/SignUp.tsx';
 import Login from './pages/Login/Login.tsx';
+import WelcomePage from './pages/WelcomePage/WelcomePage.tsx';
+import Leaderboard from './pages/Leaderboard/Leaderboard.tsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <WelcomePage />
+  },
+  {
+    path: "/leaderboards",
+    element: <Leaderboard />
+  },
+  {
+    path: "/login",
     element: <Login />
   },
+
   {
     path: "/signup",
     element: <SignUp />

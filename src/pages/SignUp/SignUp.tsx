@@ -1,12 +1,15 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import picture from '../../assets/vardana-lomi.png'; 
+import userIcon from '../../assets/userIcon.png';
+import emailIcon from '../../assets/emailIcon.png';
+import passwordIcon from '../../assets/passwordIcon.png';
 import { app } from '../../firebase';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getDatabase, ref, set, get } from "firebase/database";
 import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css';
+import SignUpHeader from '../../components/Header/SignUpHeader';
 
 interface FormValues {
     email: string;
@@ -23,7 +26,6 @@ const SignUp: React.FC = () => {
         const db = getDatabase(app);
         
         try {
-            
             const usernameRef = ref(db, `usernames/${values.username}`);
             const snapshot = await get(usernameRef);
     
@@ -37,31 +39,25 @@ const SignUp: React.FC = () => {
                 return;
             }
     
-            
             const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
             const user = userCredential.user;
-            console.log('User registered successfully:', user);
     
-            
             await set(ref(db, 'users/' + user.uid), {
                 email: user.email,
                 username: values.username, 
             });
     
-            
             await set(usernameRef, true);
     
-            
             Toastify({
                 text: "Registration successful! Redirecting...",
                 duration: 2000,
-                backgroundColor: "black",
+                backgroundColor: "#DA58CD",
                 stopOnFocus: true
             }).showToast();
     
-            
             setTimeout(() => {
-                window.location.href = "/dashboard"; 
+                navigate('/dashboard'); 
             }, 2000);
     
         } catch (error) {
@@ -71,27 +67,25 @@ const SignUp: React.FC = () => {
             Toastify({
                 text: `Error: ${errorMessage}`,
                 duration: 3000,
-                backgroundColor: "red",
+                backgroundColor: "#DA58CD",
                 stopOnFocus: true
             }).showToast();
         }
     };
 
     return (
-        <div className="bg-gray-200 ml-auto mr-auto mt-5 p-10 w-[80%] min-h-[80vh] flex flex-row items-center justify-between">
-            <div className="w-[50%]">
-                <img className='w-full' src={picture} alt="Sign Up" />
-            </div>
-            <div className="bg-white shadow-lg w-[40%] flex flex-col justify-center p-8 rounded-md">
-                <h2 className="text-3xl mb-8">Sign Up</h2>
+        <>
+        <SignUpHeader />
+        <div className="ml-auto mr-auto mt-5 p-10 w-[80%] min-h-[80vh] flex flex-row items-center justify-between">
+            <div className="bg-white border-gray-400 shadow-custom w-[40%] flex flex-col justify-center p-8 rounded-3xl mx-auto">
+                <h2 className="text-3xl mb-8 mx-auto font-bold">Get Started</h2>
                 <Formik
                     initialValues={{ email: '', password: '', repeatPassword: '', username: '' }} 
                     validate={values => {
                         const errors: Partial<FormValues> = {};
                         if (!values.username) {
                             errors.username = 'Required';
-                        }
-                        if(values.username.length > 20){
+                        } else if (values.username.length > 20) {
                             errors.username = 'Username must be less than 20 characters';
                         }
                         if (!values.email) {
@@ -101,8 +95,8 @@ const SignUp: React.FC = () => {
                         }
                         if (!values.password) {
                             errors.password = 'Required';
-                        } else if (values.password.length < 6) {
-                            errors.password = 'Password must be at least 6 characters';
+                        } else if (values.password.length < 8) {
+                            errors.password = 'Password must be at least 8 characters';
                         }
                         if (!values.repeatPassword) {
                             errors.repeatPassword = 'Required';
@@ -113,66 +107,73 @@ const SignUp: React.FC = () => {
                     }}
                     onSubmit={handleSignUp}
                 >
-                    <Form className='flex flex-col'>
-                        <label className="mb-3" htmlFor="username">Username</label>
-                        <Field
-                            id="username"
-                            type="text"
-                            name="username"
-                            placeholder="Username"
-                            className="mb-3 p-3 border border-gray-300 rounded"
-                        />
-                        <ErrorMessage name="username" component="div" className="text-red-500 mb-4" />
+                    {({ isSubmitting, isValid, dirty }) => (
+                        <Form className='flex flex-col'>
+                            <label className="mb-3 font-bold" htmlFor="username">Full Name</label>
+                            <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                <img src={userIcon} alt="User Icon" className="mr-2" />
+                                <Field
+                                    id="username"
+                                    type="text"
+                                    name="username"
+                                    placeholder="Third Thimbleton"
+                                    className="w-full focus:outline-none"
+                                />
+                                <ErrorMessage name="username" component="div" className="absolute -bottom-6 text-red-500 text-sm" />
+                            </div>
 
-                        <label className="mb-3" htmlFor="email">Email Address</label>
-                        <Field
-                            id="email"
-                            type="email"
-                            name="email"
-                            placeholder="Email Address"
-                            className="mb-3 p-3 border border-gray-300 rounded"
-                        />
-                        <ErrorMessage name="email" component="div" className="text-red-500 mb-4" />
+                            <label className="mb-3 font-bold" htmlFor="email">Email Address</label>
+                            <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                <img src={emailIcon} alt="Email Icon" className="mr-2" />
+                                <Field
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    placeholder="address@site.com"
+                                    className="w-full focus:outline-none"
+                                />
+                                <ErrorMessage name="email" component="div" className="absolute -bottom-6 text-red-500 text-sm" />
+                            </div>
 
-                        <label className="mb-3" htmlFor="password">Password</label>
-                        <Field
-                            id="password"
-                            type="password"
-                            name="password"
-                            placeholder="Password"
-                            className="mb-3 p-3 border border-gray-300 rounded"
-                        />
-                        <ErrorMessage name="password" component="div" className="text-red-500 mb-4" />
+                            <label className="mb-3 font-bold" htmlFor="password">Password</label>
+                            <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                <img src={passwordIcon} alt="Password Icon" className="mr-2" />
+                                <Field
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    placeholder="Minimum 8 Characters"
+                                    className="w-full focus:outline-none"
+                                />
+                                <ErrorMessage name="password" component="div" className="absolute -bottom-6 text-red-500 text-sm" />
+                            </div>
 
-                        <label className="mb-3" htmlFor="repeatPassword">Repeat Password</label>
-                        <Field
-                            id="repeatPassword"
-                            type="password"
-                            name="repeatPassword"
-                            placeholder="Repeat Password"
-                            className="mb-4 p-3 border border-gray-300 rounded"
-                        />
-                        <ErrorMessage name="repeatPassword" component="div" className="text-red-500 mb-4" />
+                            <label className="mb-3 font-bold" htmlFor="repeatPassword">Confirm Password</label>
+                            <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                <img src={passwordIcon} alt="Password Icon" className="mr-2" />
+                                <Field
+                                    id="repeatPassword"
+                                    type="password"
+                                    name="repeatPassword"
+                                    placeholder="Repeat Password"
+                                    className="w-full focus:outline-none"
+                                />
+                                <ErrorMessage name="repeatPassword" component="div" className="absolute -bottom-6 text-red-500 text-sm" />
+                            </div>
 
-                        <button
-                            type="submit"
-                            className="bg-black text-white p-3 rounded hover:bg-gray-800 mb-4"
-                        >
-                            Create new account
-                        </button>
-                    </Form>
+                            <button
+                                type="submit"
+                                className={`bg-black text-white p-3 rounded-3xl mt-2 mb-4 ${isValid && dirty ? 'bg-login-btn-active' : 'bg-login-btn-default'}`}
+                                disabled={isSubmitting || !isValid || !dirty}
+                            >
+                                Create new account
+                            </button>
+                        </Form>
+                    )}
                 </Formik>
-                <div className='mt-4'>
-                    Already Have An Account?{' '}
-                    <span
-                        onClick={() => navigate("/")}
-                        className="text-purple-500 cursor-pointer"
-                    >
-                        Login
-                    </span>
-                </div>
             </div>
         </div>
+        </>
     );
 };
 

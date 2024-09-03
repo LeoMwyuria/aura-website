@@ -20,6 +20,7 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0",
     "react-toastify": "^10.0.5",
+    "tailwind-scrollbar": "^3.1.0",
     "tailwindcss": "^3.4.9",
     "toastify-js": "^1.12.0",
     "yup": "^1.4.0"

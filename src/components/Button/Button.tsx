@@ -4,14 +4,13 @@ interface ButtonProps {
     label: string;
     onClick?: () => void;
     className?: string;
-    active?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ label, onClick, className, active }) => {
+const Button: React.FC<ButtonProps> = ({ label, onClick, className,  }) => {
     return (
         <button
             onClick={onClick}
-            className={`font-semibold py-2 px-4 rounded shadow-lg mt-2 text-left ${active ? 'bg-white text-black' : 'hover:bg-white'} ${className}`}
+            className={`font-semibold py-2 px-4 rounded shadow-lg mt-2 text-left ${className}`}
         >
             {label}
         </button>

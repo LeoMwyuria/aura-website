@@ -6,7 +6,7 @@ import Table from "./components/Table/Table";
 import { useNavigate } from 'react-router-dom';
 import 'toastify-js/src/toastify.css';
 import Toastify from 'toastify-js';
-import Dashboards from './components/Dashboards/Dashboards';
+
 
 const App: React.FC = () => {
   const [username, setUsername] = useState<string | null>(null);
@@ -102,7 +102,7 @@ const App: React.FC = () => {
             <span className='font-semibold'>Current Stats: </span>
           </div>
         </div>
-        <Dashboards />
+        
       </div>
       <div className="w-[80%]">
         <Table headers={['Comment', 'Current Aura', 'Date', 'Point']} data={tableData} />
@@ -110,5 +110,6 @@ const App: React.FC = () => {
     </div>
   );
 };
+
 
 export default App;
