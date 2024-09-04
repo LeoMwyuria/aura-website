@@ -108,8 +108,8 @@ const Login: React.FC = () => {
                             {isSubmitting && <div className="text-gray-500 mb-4">Logging in...</div>}
                             <button
                                 type="submit"
-                                className={`p-3 rounded-3xl mt-3 mb-4 ${dirty && isValid ? 'bg-login-btn-active' : 'bg-login-btn-default'} text-white`}
-                                disabled={isSubmitting}
+                                className={`p-3 rounded-3xl mt-3 mb-4 ${dirty && isValid ? 'bg-login-btn-active cursor-pointer' : 'bg-login-btn-default cursor-not-allowed'} text-white`}
+                                disabled={isSubmitting || !isValid || !dirty}
                             >
                                 Continue
                             </button>

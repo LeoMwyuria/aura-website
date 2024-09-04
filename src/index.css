@@ -2,18 +2,98 @@
 @tailwind components;
 @tailwind utilities;
 
-input{
+input {
   outline: 0;
 }
-body{
-  background-color: white;
-}
+
 body {
-  font-family: 'Inter';font-size: 22px;
+  background-color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 22px;
+  margin: 0;
+  overflow-x: hidden;
 }
 
 body {
   @apply scrollbar-thin scrollbar-thumb-rounded scrollbar-track-rounded;
+}
+
+.star {
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: starAnimation 2s linear forwards;
+}
+
+@keyframes starAnimation {
+  0% {
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    opacity: 1; 
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(4) rotate(90deg);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(20) rotate(180deg);
+    opacity: 1;
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(50) rotate(270deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(190) rotate(360deg);
+    opacity: 0.1; 
+  }
+}
+
+@keyframes fadeToWhite {
+  0% {
+    background-color: #DA58CD;
+  }
+  100% {
+    background-color: white;
+  }
+}
+
+.star-container {
+  background-color: white;
+  transition: background-color 3s;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 10; 
+}
+
+.star-container.transition-white {
+  background-color: #DA58CD;
+  transition: background-color 1s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 3s ease-out forwards;
+}
+
+.star-container.done {
+  opacity: 0;
+  transition: opacity 1s;
+  background-color: white; 
+  z-index: -2; 
 }
 
 .scrollbar-thumb {
@@ -29,13 +109,12 @@ body {
 }
 
 .scrollbar-thumb-rounded {
-  scrollbar-color: #DA58CD #f5f5f5; 
+  scrollbar-color: #DA58CD #f5f5f5;
 }
 
 .scrollbar-track-rounded {
-  scrollbar-color: #585DDA #f5f5f5; 
+  scrollbar-color: #585DDA #f5f5f5;
 }
-
 
 ::-webkit-scrollbar {
   width: 8px;
@@ -49,8 +128,8 @@ body {
 ::-webkit-scrollbar-track {
   background-color: #f5f5f5;
 }
+
 .button {
   outline: none;
   border: none;
 }
-

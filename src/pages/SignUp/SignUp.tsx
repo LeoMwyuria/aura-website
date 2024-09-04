@@ -163,7 +163,7 @@ const SignUp: React.FC = () => {
 
                             <button
                                 type="submit"
-                                className={`bg-black text-white p-3 rounded-3xl mt-2 mb-4 ${isValid && dirty ? 'bg-login-btn-active' : 'bg-login-btn-default'}`}
+                                className={`bg-black text-white p-3 rounded-3xl mt-2 mb-4 ${isValid && dirty ? 'bg-login-btn-active' : 'bg-login-btn-default cursor-not-allowed'}`}
                                 disabled={isSubmitting || !isValid || !dirty}
                             >
                                 Create new account

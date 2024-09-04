@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Header from "../../components/Header/Header";
 import welcomePagePicture from '../../assets/welcomePagePicture.png';
 import auraSymbol from '../../assets/auraSymbol.png';
@@ -6,19 +7,29 @@ import welcomePagePicture2 from '../../assets/welcomePagePicture2.png';
 import { useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import ScrollToTopButton from "../../components/ScrollToTop/ScrollToTop";
-
+import StarAnimation from "../../components/StarAnimation/StarAnimation";
 
 const WelcomePage = () => {
+  const [isVisible, setIsVisible] = useState(false);
   const navigation = useNavigate();
-  
+
   const toSignUpClick = () => {
     navigation('/signup');
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1860); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen">
+      <StarAnimation />
       <Header />
-      <main className="flex-grow">
+      <main className={`flex-grow ${isVisible ? 'fade-in' : 'opacity-0'}`}>
         <div className="h-[40%] flex flex-col justify-center items-center text-center mt-5">
           <div>
             <span className="text-8xl font-bold">Your aura</span>
@@ -34,6 +45,7 @@ const WelcomePage = () => {
           </div>
           
           <Button 
+          onClick={toSignUpClick}
             label="Claim"
             className="text-white font-semibold bg-gradient-custom text-sm flex items-center justify-center pl-3 pr-3 rounded-2xl hover:cursor-pointer hover:text-black w-[7%] p-1.5 mx-auto mt-4"
           />

@@ -8,17 +8,18 @@ import userOrange from '../../assets/userOrange.png';
 
 const Leaderboard = () => {
   const leaderboardData = [
-    { rank: 1, name: 'Swiftie Jackson', aura: 2500, image: userOrange },
-    { rank: 2, name: 'Alex Doe', aura: 2400, image: userPurple },
-    { rank: 3, name: 'Jordan Smith', aura: 2100, image: userGreen },
-    { rank: 4, name: 'Swiftie Jackson', aura: 2000, image: userGreen },
-    { rank: 5, name: 'Alex Doe', aura: 1900, image: userPurple },
-    { rank: 6, name: 'Jordan Smith', aura: 1800, image: userOrange },
-    { rank: 7, name: 'Jordan Smith', aura: 1700, image: userPurple },
-    { rank: 8, name: 'Swiftie Jackson', aura: 1600, image: userGreen },
-    { rank: 9, name: 'Alex Doe', aura: 1500, image: userOrange },
-    { rank: 10, name: 'Jordan Smith', aura: 1400, image: userGreen },
-  ];
+    { rank: 1, name: 'First Firstofferson', aura: 12500, image: userPurple },
+    { rank: 2, name: 'Second Secondson', aura: 8000, image: userPurple },
+    { rank: 3, name: 'Third Thimbleton', aura: 6500, image: userOrange },
+    { rank: 4, name: 'Fourth Fourdie', aura: 4300, image: userPurple },
+    { rank: 5, name: 'Fifth Fiverson', aura: 2100, image: userGreen },
+    { rank: 6, name: 'Sixth Sexington', aura: 1700, image: userPurple },
+    { rank: 7, name: 'Seventh Servinger', aura: 1400, image: userOrange },
+    { rank: 8, name: 'Eighth Eighterberg', aura: 1100, image: userPurple },
+    { rank: 9, name: 'Ninth Eleventeeth', aura: 800, image: userGreen },
+    { rank: 10, name: 'Ben Tennison', aura: 600, image: userPurple },
+];
+
 
   const rankStyles = (rank: number) => {
     switch (rank) {
