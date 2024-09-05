@@ -4,7 +4,7 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from 'react-router-dom';
 import 'toastify-js/src/toastify.css';
 import Toastify from 'toastify-js';
-import ProfilePictureUpload from '../../components/ProfilePictureUpload/ProfilePictureUpload';
+// import ProfilePictureUpload from '../../components/ProfilePictureUpload/ProfilePictureUpload';
 import Button from '../../components/Button/Button';
 
 enum AdminAction {
@@ -154,7 +154,7 @@ const AdminPanel: React.FC = () => {
     <div className="border p-5 w-screen h-screen flex flex-row">
       <div className="border w-[20%] p-5 bg-custom-blue">
         <div className="flex flex-column justify-between items-center">
-          <ProfilePictureUpload />
+          {/* <ProfilePictureUpload /> */}
           <div>
             <p className='font-semibold mr-9'>
               {username ? username : 'Loading...'}
