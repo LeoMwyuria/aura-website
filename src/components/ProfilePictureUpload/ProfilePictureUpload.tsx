@@ -7,11 +7,14 @@ import { getAuth } from 'firebase/auth';
 import Toastify from 'toastify-js';
 import Modal from '../Modal/Modal';
 
-const ProfilePictureUpload: React.FC = () => {
+interface ProfilePictureUploadProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onProfilePicChange: (newUrl: string) => void;
+}
+
+const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({ isOpen, onClose, onProfilePicChange }) => {
   const [file, setFile] = useState<File | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -23,12 +26,8 @@ const ProfilePictureUpload: React.FC = () => {
 
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setImageUrl(data.profilePicture || defaultProfilePic);
-        } else {
-          setImageUrl(defaultProfilePic);
-        }
-      } else {
-        setImageUrl(defaultProfilePic);
+          setFile(data.profilePicture || defaultProfilePic); 
+        } 
       }
     };
     fetchUserProfilePicture();
@@ -46,70 +45,40 @@ const ProfilePictureUpload: React.FC = () => {
       try {
         await uploadBytes(fileRef, file);
         const url = await getDownloadURL(fileRef);
-        setImageUrl(url);
-        setIsModalOpen(false);
+        onClose(); 
         const userDocRef = doc(firestore, `users/${user.uid}`);
         await setDoc(userDocRef, { profilePicture: url }, { merge: true });
-        setTimeout(() => {
-          Toastify({
-            text: "Profile Picture Changed Successfully!",
-            duration: 2200,
-            backgroundColor: "black",
-            stopOnFocus: true
-          }).showToast();
-        }, 500);
+        Toastify({
+          text: "Profile Picture Changed Successfully!",
+          duration: 2200,
+          backgroundColor: "#DA58CD",
+          stopOnFocus: true
+        }).showToast();
+        onProfilePicChange(url); 
       } catch (error) {
         console.error("Upload failed:", error);
       }
     }
   };
 
-  const handleImageClick = () => {
-    if (imageUrl !== defaultProfilePic) {
-      setIsImageModalOpen(true);
-    }
-  };
-
   return (
-    <div className="flex flex-col items-center">
-      <img
-        src={imageUrl || defaultProfilePic}
-        alt="Profile"
-        className={`w-24 h-24 mt-4 rounded-full cursor-pointer ${imageUrl === defaultProfilePic ? 'opacity-50 cursor-not-allowed' : ''}`}
-        onClick={handleImageClick}
-      />
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="bg-black text-white px-4 py-2 mt-2 rounded"
-      >
-        Change Picture
-      </button>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <h2 className="text-xl font-semibold mb-4">Upload Profile Picture</h2>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div className="flex flex-col items-center">
+        <h2 className="text-xl font-semibold mb-4 text-center">Upload Profile Picture</h2>
         <input
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          className="mb-4"
+          className="mb-4 w-full"
         />
         <button
           onClick={handleUpload}
-          className="bg-black text-white px-4 py-2 rounded"
+          className="bg-black text-white px-4 py-2 rounded w-full"
         >
           Upload
         </button>
-      </Modal>
-
-      <Modal isOpen={isImageModalOpen} onClose={() => setIsImageModalOpen(false)}>
-        <div className="flex justify-center items-center h-full p-4">
-          <img
-            src={imageUrl || defaultProfilePic}
-            alt="Profile"
-            className="max-w-full max-h-full object-contain rounded-lg"
-          />
-        </div>
-      </Modal>
-    </div>
+      </div>
+    </Modal>
   );
 };
 

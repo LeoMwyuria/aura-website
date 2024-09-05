@@ -12,11 +12,13 @@
   "dependencies": {
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.3",
+    "chart.js": "^4.4.4",
     "dotenv": "^16.4.5",
     "firebase": "^10.12.5",
     "formik": "^2.4.6",
     "postcss": "^8.4.41",
     "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0",
     "react-toastify": "^10.0.5",
