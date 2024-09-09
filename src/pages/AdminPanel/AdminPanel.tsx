@@ -4,7 +4,6 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import { useNavigate } from 'react-router-dom';
 import 'toastify-js/src/toastify.css';
 import Toastify from 'toastify-js';
-// import ProfilePictureUpload from '../../components/ProfilePictureUpload/ProfilePictureUpload';
 import Button from '../../components/Button/Button';
 
 enum AdminAction {
@@ -55,7 +54,7 @@ const AdminPanel: React.FC = () => {
       Toastify({
         text: "Logged Out Successfully!",
         duration: 1700,
-        backgroundColor: "black",
+        backgroundColor: "` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` ` `",
         stopOnFocus: true
       }).showToast();
       navigate('/');
@@ -69,15 +68,16 @@ const AdminPanel: React.FC = () => {
     const currentDate = now.toISOString();
 
     try {
-      const response = await fetch(`https://analog-pilot-432306-v2.oa.r.appspot.com/api/users/${usernameToUpdate}/update-aura`, {
+      const response = await fetch(`https://aura-api-519230006497.europe-west2.run.app/update-aura`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          username:usernameToUpdate,
           comment: comment,
-          points: points,
-          date: currentDate,
+          aura: points,
+          event_date: currentDate,
         }),
       });
 

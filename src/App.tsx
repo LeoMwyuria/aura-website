@@ -18,17 +18,17 @@ import userOrange from './assets/userOrange.png';
 import disputeLogo from './assets/disputesLogo.png';
 import threeAuraLogo from './assets/3AuraLogo.png';
 import YourNetwork3Logo from './assets/YourNetwork3Logo.png';
-import upGraph from './assets/upGraph.png'; // Import upGraph image
-import downGraph from './assets/downGraph.png'; // Import downGraph image
+import upGraph from './assets/upGraph.png'; 
+import downGraph from './assets/downGraph.png'; 
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const App: React.FC = () => {
   const [username, setUsername] = useState<string | null>(null);
-
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
+
 
     if (user) {
       const db = getDatabase();
@@ -38,7 +38,6 @@ const App: React.FC = () => {
 
       const unsubscribe = onValue(userRef, (snapshot) => {
         const data = snapshot.val();
-        console.log("User Data:", data);
 
         if (data && data.username) {
           setUsername(data.username);
@@ -56,6 +55,19 @@ const App: React.FC = () => {
       console.error("No authenticated user found.");
       setUsername('Not authenticated');
     }
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://aura-api-519230006497.europe-west2.run.app/dashboard/LeoMwyuria');
+        const jsonData = await response.json();
+        console.log(jsonData); 
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const auraData = [

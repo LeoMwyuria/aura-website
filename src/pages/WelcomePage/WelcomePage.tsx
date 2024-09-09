@@ -71,7 +71,11 @@ const WelcomePage = () => {
               <span className="text-custom-purple"> instantly</span>.
             </p>
           </div>
-          <Button label={"Claim Your Aura"} className="text-white font-semibold bg-black text-sm flex items-center justify-center pl-3 pr-3 rounded-2xl hover:cursor-pointer hover:bg-gray-700 w-[7%] p-1.5 mx-auto mt-4"/>
+          <Button 
+            label={"Claim Your Aura"} 
+            className="text-white font-semibold bg-black text-sm flex items-center justify-center pl-3 pr-3 rounded-2xl hover:cursor-pointer hover:bg-gray-700 w-[7%] min-w-[150px] p-1.5 mx-auto mt-4"
+          />
+
         </div>
         <div className="flex justify-center flex-col items-center h-full">
           <img className="h-[90%]" src={welcomePagePicture2} alt="" />

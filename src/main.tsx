@@ -13,6 +13,7 @@ import VerifyEmail from './pages/VerifyEmail/VerifyEmail.tsx';
 import DetermineYourAura from './pages/DetermineAura/DetermineAura.tsx';
 import { getDatabase, onValue, ref } from 'firebase/database';
 import LeaderboardLoggedIn from './pages/Leaderboard/LeaderboardLoggedIn.tsx';
+import RecoverPassword from './pages/RecoveryPassword/RecoveryPassword.tsx';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,14 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />
+  },
+  {
+    path: "/signup",
+    element: <SignUp />
+  },
+  {
+    path: "/recover-password",  // Add recover password route
+    element: <RecoverPassword />
   },
   {
     path: "/determine-aura",
@@ -69,10 +78,6 @@ const router = createBrowserRouter([
     )
   },
   {
-    path: "/signup",
-    element: <SignUp />
-  },
-  {
     path: "/dashboard",
     element: (
       <PrivateRoute
@@ -82,14 +87,13 @@ const router = createBrowserRouter([
       />
     )
   },
-  
   {
     path: "/adminpanel",
     element: (
       <PrivateRoute
         element={<AdminPanel />}
         redirectPath="/" 
-        allowedEmail="admin@gmail.com" 
+        allowedEmail="hellopantha80@gmail.com" 
       />
     )
   }

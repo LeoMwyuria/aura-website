@@ -38,14 +38,32 @@ const SignUp: React.FC = () => {
             
             await sendEmailVerification(user);
     
+            
+            const apiUrl = `https://aura-api-519230006497.europe-west2.run.app/new-user/${values.username}`;
+            const postData = {
+                username: values.username,
+                current_aura: 0,
+                peek_aura: 0,
+                friends:[],
+                dispute: 0,
+            };
+    
+            await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(postData),
+            });
+    
+            
             Toastify({
                 text: "Registration successful! Please verify your email.",
                 duration: 2000,
                 backgroundColor: "#DA58CD",
-                stopOnFocus: true
+                stopOnFocus: true,
             }).showToast();
     
-            
             navigate('/verify-email');
     
         } catch (error) {
@@ -56,10 +74,11 @@ const SignUp: React.FC = () => {
                 text: `Error: ${errorMessage}`,
                 duration: 3000,
                 backgroundColor: "#DA58CD",
-                stopOnFocus: true
+                stopOnFocus: true,
             }).showToast();
         }
     };
+    
     
     
     

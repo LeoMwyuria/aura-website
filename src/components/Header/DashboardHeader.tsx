@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
-import { getDatabase, ref, get } from 'firebase/database';  // Import from firebase/database
+import { getDatabase, ref, get } from 'firebase/database';
 import { doc, getDoc } from 'firebase/firestore';
 import AuraNet from '../../assets/AuraNet.png';
 import userPurple from '../../assets/userPurple.png';
 import ProfilePictureUpload from '../ProfilePictureUpload/ProfilePictureUpload';
 import { firestore } from '../../firebase';
-
+import editProfile from '../../assets/user-edit.png'
+import logOutIcon from '../../assets/logOut.png'
 const DashboardHeader = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState<string | null>(null);
@@ -110,7 +111,7 @@ const DashboardHeader = () => {
             </a>
           </nav>
         </div>
-        <div className="flex items-center relative">
+        <div className="flex items-center relative  ">
           {userName ? (
             <>
               <span className="text-black font-semibold">{userName}</span>
@@ -121,28 +122,38 @@ const DashboardHeader = () => {
                 onClick={toggleMenu}
               />
               {isMenuOpen && (
-                <div className="absolute right-0 mt-[50%] w-48 bg-white border border-gray-300 rounded-lg shadow-lg">
-                  <button
-                    onClick={() => setIsMenuOpen(false)}
-                    className="absolute top-2 right-2 text-gray-600 bg-transparent border-none cursor-pointer"
-                  >
-                    &times;
-                  </button>
-                  <div className="py-2">
+                <div className="absolute right-0 mt-[100%] w-48 bg-white border-2 border-gray-300 rounded-3xl shadow-lg font-bold">
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="absolute top-2 right-2 text-gray-600 bg-transparent border-none cursor-pointer"
+                >
+                  &times;
+                </button>
+                <div className="py-2">
+                 
+                  <div className="flex items-center justify-start text-lg px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                    <img src={editProfile} alt="Edit Profile" className="w-5 h-5 mr-2" />
                     <a
                       onClick={openProfilePicModal}
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                      className="text-gray-800"
                     >
                       Change Picture
                     </a>
+                  </div>
+              
+                  
+                  <div className="flex items-center justify-start text-lg px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                    <img src={logOutIcon} alt="Log Out" className="w-5 h-5 mr-2" />
                     <a
                       onClick={handleLogoutClick}
-                      className="block px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer"
+                      className="text-gray-800"
                     >
                       Log Out
                     </a>
                   </div>
                 </div>
+              </div>
+              
               )}
             </>
           ) : (

@@ -5,6 +5,7 @@ import userGreen from '../../assets/userGreen.png';
 import userPurple from '../../assets/userPurple.png';
 import userOrange from '../../assets/userOrange.png';
 import DashboardHeader from "../../components/Header/DashboardHeader";
+import { useEffect } from "react";
 
 const LeaderboardLoggedIn = () => {
   const leaderboardData = [
@@ -33,6 +34,19 @@ const LeaderboardLoggedIn = () => {
         return 'bg-transparent text-black border-none text-base';
     }
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://aura-api-519230006497.europe-west2.run.app/world-ranking');
+        const jsonData = await response.json();
+        console.log(jsonData); 
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="relative min-h-screen">
