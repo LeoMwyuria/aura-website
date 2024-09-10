@@ -1,25 +1,15 @@
 import Footer from "../../components/Footer/LeaderBoardFooter";
-import Header from "../../components/Header/Header";
 import leaderboardPicture from '../../assets/leaderboardPicture.png';
 import auralogo from '../../assets/auraSymbol.png';
 import userGreen from '../../assets/userGreen.png';
 import userPurple from '../../assets/userPurple.png';
 import userOrange from '../../assets/userOrange.png';
+import { useEffect, useState } from "react";
+import Header from "../../components/Header/Header";
 
-const Leaderboard = () => {
-  const leaderboardData = [
-    { rank: 1, name: 'First Firstofferson', aura: 12500, image: userPurple },
-    { rank: 2, name: 'Second Secondson', aura: 8000, image: userPurple },
-    { rank: 3, name: 'Third Thimbleton', aura: 6500, image: userOrange },
-    { rank: 4, name: 'Fourth Fourdie', aura: 4300, image: userPurple },
-    { rank: 5, name: 'Fifth Fiverson', aura: 2100, image: userGreen },
-    { rank: 6, name: 'Sixth Sexington', aura: 1700, image: userPurple },
-    { rank: 7, name: 'Seventh Servinger', aura: 1400, image: userOrange },
-    { rank: 8, name: 'Eighth Eighterberg', aura: 1100, image: userPurple },
-    { rank: 9, name: 'Ninth Eleventeeth', aura: 800, image: userGreen },
-    { rank: 10, name: 'Ben Tennison', aura: 600, image: userPurple },
-];
-
+const LeaderboardLoggedIn = () => {
+  // Define the types inline for leaderboard entries
+  const [leaderboardData, setLeaderboardData] = useState<{ rank: number; name: string; aura: number; image: string }[]>([]);
 
   const rankStyles = (rank: number) => {
     switch (rank) {
@@ -34,6 +24,29 @@ const Leaderboard = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://aura-api-519230006497.europe-west2.run.app/world-ranking');
+        const jsonData: [string, number][] = await response.json();
+
+        // Map the fetched data to the leaderboard structure
+        const formattedData = jsonData.map((entry, index) => ({
+          rank: index + 1, // Rank is based on index (1-based)
+          name: entry[0],  // Name is the first item in the sub-array
+          aura: entry[1],  // Aura is the second item
+          image: index % 3 === 0 ? userOrange : index % 2 === 0 ? userGreen : userPurple // Simple logic to alternate avatars
+        }));
+
+        setLeaderboardData(formattedData); // Set the data in state
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="relative min-h-screen">
       <Header />
@@ -45,8 +58,8 @@ const Leaderboard = () => {
           <div className="mt-8 w-full max-w-xl mx-auto border border-gray-300 rounded-t-3xl shadow-custom p-4 relative z-10">
             <div className="relative">
               <div className="flex flex-col">
-                {leaderboardData.map((entry, index) => (
-                  <div key={entry.rank} className={`flex items-center justify-between border-b border-gray-300 py-3 px-4 ${index === leaderboardData.length - 1 ? 'pb-16' : ''}`}>
+                {leaderboardData.map((entry) => (
+                  <div key={entry.rank} className={`flex items-center justify-between border-b border-gray-300 py-3 px-4 ${entry.rank === leaderboardData.length ? 'pb-16' : ''}`}>
                     <div className="flex items-center">
                       <span className={`h-7 w-7 flex items-center justify-center rounded-full font-bold ${rankStyles(entry.rank)} border border-solid`}>
                         {entry.rank}
@@ -70,4 +83,4 @@ const Leaderboard = () => {
   );
 };
 
-export default Leaderboard;
+export default LeaderboardLoggedIn;
