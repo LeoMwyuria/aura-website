@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale,
-  PointElement, LineElement, Title, Tooltip, Legend
+  PointElement, LineElement, Title, Tooltip, Legend,
+  ChartData,
+  ChartOptions,
+  Filler,
+  ScriptableContext
 } from 'chart.js';
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
@@ -19,7 +23,7 @@ import upGraph from './assets/upGraph.png';
 import downGraph from './assets/downGraph.png'; 
 import userGreen from './assets/userGreen.png'
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,Filler);
 
 interface AuraData {
   value: string;
@@ -40,10 +44,13 @@ interface currentAura {
 }
 
 const App: React.FC = () => {
+  const chartRef = useRef<ChartJS<"line">>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [auraData, setAuraData] = useState<AuraData[]>([]);
   const [networkData, setNetworkData] = useState<NetworkUser[]>([]);
   const [current_aura,setCurrentAura] = useState<currentAura | any>(null);
+  const [recentActivity, setRecentActivity] = useState<AuraData[]>([]);
+
 
   useEffect(() => {
     const auth = getAuth();
@@ -75,75 +82,122 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (username) {
-        try {
-          const response = await fetch(`https://aura-api-519230006497.europe-west2.run.app/dashboard/${username}`);
-          const data = await response.json();
-          console.log(auraData)
-  
-          // Correctly set current_aura and friends
-          const { current_aura, historical_changes, friends } = data;
-  
-          setAuraData(historical_changes.map((change: any) => ({
-            value: change.aura.toString(),
+  const fetchData = async () => {
+    if (username) {
+      try {
+        const response = await fetch(`https://aura-api-519230006497.europe-west2.run.app/dashboard/${username}`);
+        const data = await response.json();
+
+        const { current_aura, historical_changes, friends } = data;
+
+        
+        let cumulativeAura = 0;
+        const cumulativeAuraData = historical_changes.map((change: any) => {
+          cumulativeAura += parseInt(change.aura); 
+          return {
+            value: cumulativeAura.toString(), 
             date: new Date(change.event_date).toLocaleDateString(),
-          })));
-  
-          setCurrentAura(current_aura); // Update the current aura correctly
-  
-          setNetworkData(friends.map((friend: any) => {
-            const friendAura = parseInt(friend.aura) || 0;
-            const friendChange = parseInt(friend.change) || 0;
-            return {
-              name: friend.username,
-              aura: (friendAura + friendChange).toString(),
-              change: friend.change,
-              image: userGreen,
-            };
-          }));
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
+          };
+        });
+
+        const individualChangesData = historical_changes.map((change: any) => ({
+          value: change.aura.toString(),
+          date: new Date(change.event_date).toLocaleDateString(),
+        }));
+
+        setAuraData(cumulativeAuraData);
+        setRecentActivity(individualChangesData); 
+        setCurrentAura(current_aura);
+
+        setNetworkData(friends.map((friend: any) => {
+          const friendAura = parseInt(friend.aura) || 0;
+          const friendChange = parseInt(friend.change) || 0;
+          return {
+            name: friend.username,
+            aura: (friendAura + friendChange).toString(),
+            change: friend.change,
+            image: userGreen,
+          };
+        }));
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    };
-  
-    fetchData();
-  }, [username]);
-  
-  const auraProgressData = {
-    labels: auraData.map((data) => data.date),
-    datasets: [
-      {
-        label: 'Aura Progress',
-        data: auraData.map((data) => parseInt(data.value)),
-        fill: true,
-        backgroundColor: 'rgba(75,192,192,0.2)',
-        borderColor: 'rgba(75,192,192,1)',
-        borderWidth: 2,
-        pointRadius: 3,
-        pointBackgroundColor: 'rgba(75,192,192,1)',
-      },
-    ],
+    }
   };
 
-  const auraProgressOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top' as const,
-      },
-      title: {
-        display: true,
-        text: 'Your Aura Progress',
-      },
+  fetchData();
+}, [username]);
+
+useEffect(() => {
+  const chart = chartRef.current;
+
+  if (chart) {
+    const ctx = chart.ctx;
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(218, 88, 205, 0.5)');
+    gradient.addColorStop(1, 'rgba(218, 88, 205, 0)');
+
+    if (chart.data.datasets[0]) {
+      chart.data.datasets[0].backgroundColor = gradient;
+    }
+
+    chart.update();
+  }
+}, [auraData]);
+  
+const auraProgressData: ChartData<'line'> = {
+  labels: auraData.map((data) => data.date),
+  datasets: [
+    {
+      label: 'Aura Progress',
+      data: auraData.map((data) => parseInt(data.value)),
+      fill: true,
+      backgroundColor: '#DA58CD',
+      borderColor: '#DA58CD',
+      borderWidth: 2,
+      pointRadius: 1.5,
+      pointBackgroundColor: '#DA58CD',
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
+  ],
+};
+
+
+
+  
+const auraProgressOptions: ChartOptions<'line'> = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
     },
-  };
+    filler: {
+      propagate: true
+    },
+    title: {
+      display: true,
+      text: 'Your Aura Progress',
+    },
+  },
+  scales: {
+    y: {
+      beginAtZero: false,
+    },
+  },
+};
+
+const createGradient = (ctx: CanvasRenderingContext2D, isPositive: boolean) => {
+  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+  if (isPositive) {
+    gradient.addColorStop(0, 'rgba(76, 175, 80, 0.5)');  // Green gradient for positive aura
+    gradient.addColorStop(1, 'rgba(76, 175, 80, 0)');
+  } else {
+    gradient.addColorStop(0, 'rgba(244, 67, 54, 0.5)');  // Red gradient for negative aura
+    gradient.addColorStop(1, 'rgba(244, 67, 54, 0)');
+  }
+  return gradient;
+};
+
+
   const getAura30DaysAgo = (historical_changes: AuraData[]): string => {
     const currentDate = new Date();
     const thirtyDaysAgo = new Date();
@@ -156,10 +210,13 @@ const App: React.FC = () => {
   
     return closestEntry ? closestEntry.value : '0';
   };
+  
 
   const aura30DaysAgo = auraData.length ? getAura30DaysAgo(auraData) : 'Loading...';
-  const aura30DaysAgoValue = parseInt(aura30DaysAgo, 10);
-  const auraColorClass = aura30DaysAgoValue >= 0 ? 'text-green-500' : 'text-red-500';
+  const currentAuraValue = current_aura ? current_aura.current_aura : 0;
+const isPositiveAura = currentAuraValue >= 0;
+  const auraColorClass = isPositiveAura ? 'text-green-500' : 'text-red-500';
+  const auraColorClass1 = isPositiveAura ? 'green' : 'red';
 
   return (
     <>
@@ -167,7 +224,7 @@ const App: React.FC = () => {
       <div className="p-5 bg-gray-100 min-h-screen">
         <section className="text-center mt-10">
           <h1 className="text-4xl font-bold">Welcome back, {username}</h1>
-          <div className="grid grid-cols-2 grid-rows-2 gap-6 mt-8 w-[50%] mx-auto">
+          <div className="grid grid-cols-2 gap-6 mt-8 w-[50%] max-h-[90%] mx-auto ">
             <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 border">
               <p className="font-bold text-gray-700 text-left">You have</p>
               <p className="text-4xl font-extrabold text-black flex items-center">
@@ -183,45 +240,101 @@ const App: React.FC = () => {
                 {current_aura ? current_aura.peek_aura : 'Loading...'}
               </p>
             </div>
-            <div className="bg-white h-[62%] shadow-md p-6 rounded-3xl col-span-1 row-span-2 flex flex-col justify-between border">
-                <p className="font-bold text-gray-700 text-2xl text-left mb-8">Recent aura activity</p>
-                <div className='overflow-y-auto max-h-[70%]'> 
-                  <ul className="space-y-4  flex-1 overflow-y-auto">
-                    {auraData.length ? (
-                      auraData.map((entry, index) => (
-                        <li key={index} className="flex justify-between items-center text-lg">
-                          <span className="font-bold flex items-center text-black">
-                            <img
-                              src={entry.value.startsWith('-') ? redAuraSymbol : greenAuraSymbol}
-                              alt="Aura Symbol"
-                              className="inline h-6 w-6 mr-2"
-                            />
-                            {entry.value} aura
-                          </span>
-                          <span className="text-gray-600">{entry.date}</span>
-                        </li>
-                      ))
-                    ) : (
-                      <li className="text-gray-600">No recent aura activity</li>
-                    )}
-                  </ul>
-                </div>
+            <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 flex flex-col justify-between border max-h-[550px]">
+              <p className="font-bold text-gray-700 text-2xl text-left mb-8">Recent aura activity</p>
+              <div className="flex-1 overflow-y-auto">
+                <ul className="space-y-4">
+                  {recentActivity.length ? (
+                    recentActivity.map((entry, index) => (
+                      <li key={index} className="flex justify-between items-center text-lg mr-1">
+                        <span className="font-bold flex items-center text-black">
+                          <img
+                            src={entry.value.startsWith('-') ? redAuraSymbol : greenAuraSymbol}
+                            alt="Aura Symbol"
+                            className="inline h-6 w-6 mr-2"
+                          />
+                          {entry.value} aura
+                        </span>
+                        <span className="text-gray-600">{entry.date}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-gray-600">No recent aura activity</li>
+                  )}
+                </ul>
               </div>
+            </div>
 
-              <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1">
+
+
+          <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1 max-h-[90%]">
         <p className="font-bold text-gray-700 text-left">Last month you had</p>
         <div className="flex items-center space-x-4">
-          <p className={`text-4xl font-extrabold flex items-center`}>
-            <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
-            {aura30DaysAgo}
-          </p>
-          <span className={`${auraColorClass} text-xl flex items-center`}>
-            {auraData.length ? `${parseInt(aura30DaysAgo) + current_aura.current_aura} aura` : 'Loading...'}
-          </span>
+        <p className={`text-4xl font-extrabold flex items-center`}>
+  <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
+  {aura30DaysAgo}
+</p>
+    <span className={`${auraColorClass} text-xl flex items-center`}>
+      {auraData.length ? `${currentAuraValue - parseInt(aura30DaysAgo)} aura` : 'Loading...'}
+    </span>
         </div>
-        <div className="mt-5 h-32 bg-gray-200 flex items-center justify-center">
-          <span className="text-gray-500">Graph Placeholder</span>
-        </div>
+        <div className="mt-5 h-64 flex items-center justify-center rounded-lg">
+        {auraData.length > 0 ? (
+          <Line
+            data={{
+              labels: auraData.map((entry) => entry.date),
+              datasets: [{
+                label: 'Aura Progress',
+                data: auraData.map((entry) => parseInt(entry.value)),
+                fill: true,
+                backgroundColor: (context: ScriptableContext<"line">) => {
+                  const { ctx } = context.chart;
+                  return createGradient(ctx, isPositiveAura);
+                },
+                borderColor: auraColorClass1,
+                borderWidth: 2,
+                pointRadius: 0,
+              }],
+            }}
+            options={{
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: false,
+                },
+                title: {
+                  display: false,
+                },
+              },
+              scales: {
+                x: {
+                  display: false,
+                },
+                y: {
+                  display: true,
+                  beginAtZero: false,
+                },
+              },
+              elements: {
+                line: {
+                  borderJoinStyle: 'round',
+                },
+              },
+              layout: {
+                padding: {
+                  left: 0,
+                  right: 0,
+                  top: 0,
+                  bottom: 0,
+                },
+              },
+            }}
+          />
+        ) : (
+          <span className="text-gray-500">No data available</span>
+        )}
+      </div>
+
       </div>
             <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1">
               <p className="font-bold text-gray-700 text-left">Current aura disputes</p>
@@ -238,7 +351,7 @@ const App: React.FC = () => {
           <h2 className="text-2xl font-bold">Your aura progress</h2>
           <p className="text-gray-600">Track how your aura changes throughout time.</p>
           <div className="mt-5 w-[50%] mx-auto flex flex-col justify-center items-end">
-            <Line data={auraProgressData} options={auraProgressOptions} />
+          <Line ref={chartRef} data={auraProgressData} options={auraProgressOptions} />
             <button className="bg-black text-white py-2 mt-4 rounded-3xl w-[10%] text-sm">Dispute</button>
           </div>
         </section>

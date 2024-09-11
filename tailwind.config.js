@@ -25,6 +25,7 @@ module.exports = {
         'leaderboard-third-border':'#603A0E',
         'login-btn-default':'#B9BAE1',
         'login-btn-active':'#585DDA',
+        
 
       },
       boxShadow: {

@@ -131,10 +131,9 @@ const DashboardHeader = () => {
                 </button>
                 <div className="py-2">
                  
-                  <div className="flex items-center justify-start text-lg px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  <div onClick={openProfilePicModal} className="flex items-center justify-start text-lg px-4 py-2 hover:bg-gray-100 cursor-pointer">
                     <img src={editProfile} alt="Edit Profile" className="w-5 h-5 mr-2" />
                     <a
-                      onClick={openProfilePicModal}
                       className="text-gray-800"
                     >
                       Change Picture
@@ -142,10 +141,9 @@ const DashboardHeader = () => {
                   </div>
               
                   
-                  <div className="flex items-center justify-start text-lg px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  <div  onClick={handleLogoutClick} className="flex items-center justify-start text-lg px-4 py-2 hover:bg-gray-100 cursor-pointer">
                     <img src={logOutIcon} alt="Log Out" className="w-5 h-5 mr-2" />
                     <a
-                      onClick={handleLogoutClick}
                       className="text-gray-800"
                     >
                       Log Out
