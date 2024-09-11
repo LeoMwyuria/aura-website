@@ -211,8 +211,8 @@ const App: React.FC = () => {
               <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1">
         <p className="font-bold text-gray-700 text-left">Last month you had</p>
         <div className="flex items-center space-x-4">
-          <p className={`text-4xl font-extrabold flex items-center ${auraColorClass}`}>
-            <img src={aura30DaysAgoValue >= 0 ? greenAuraSymbol : redAuraSymbol} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
+          <p className={`text-4xl font-extrabold flex items-center`}>
+            <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
             {aura30DaysAgo}
           </p>
           <span className={`${auraColorClass} text-xl flex items-center`}>
