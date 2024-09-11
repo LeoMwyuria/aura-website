@@ -12,7 +12,6 @@ import Leaderboard from './pages/Leaderboard/Leaderboard.tsx';
 import VerifyEmail from './pages/VerifyEmail/VerifyEmail.tsx';
 import DetermineYourAura from './pages/DetermineAura/DetermineAura.tsx';
 import { getDatabase, onValue, ref } from 'firebase/database';
-import LeaderboardLoggedIn from './pages/Leaderboard/LeaderboardLoggedIn.tsx';
 import RecoverPassword from './pages/RecoveryPassword/RecoveryPassword.tsx';
 
 const router = createBrowserRouter([
@@ -21,18 +20,8 @@ const router = createBrowserRouter([
     element: <WelcomePage />
   },
   {
-    path: "/leaderboards",
-    element: <Leaderboard />
-  },
-  {
     path: "/leaderboard",
-    element: (
-      <PrivateRoute
-        element={<LeaderboardLoggedIn />}
-        redirectPath="/leaderboards"
-        condition={(user) => !user.emailVerified} 
-      />
-    )
+    element: <Leaderboard />
   },
   {
     path: "/login",
@@ -43,7 +32,7 @@ const router = createBrowserRouter([
     element: <SignUp />
   },
   {
-    path: "/recover-password",  // Add recover password route
+    path: "/recover-password",  
     element: <RecoverPassword />
   },
   {

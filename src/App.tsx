@@ -12,7 +12,7 @@ import { getAuth } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
 import 'toastify-js/src/toastify.css';
 import Footer from './components/Footer/Footer';
-import DashboardHeader from './components/Header/DashboardHeader';
+import DashboardHeader from './components/Header/Header';
 import auralogo from './assets/auraSymbol.png';
 import greenAuraSymbol from './assets/greenAuraSymbol.png';
 import redAuraSymbol from './assets/redAuraSymbol.png';
@@ -188,10 +188,10 @@ const auraProgressOptions: ChartOptions<'line'> = {
 const createGradient = (ctx: CanvasRenderingContext2D, isPositive: boolean) => {
   const gradient = ctx.createLinearGradient(0, 0, 0, 400);
   if (isPositive) {
-    gradient.addColorStop(0, 'rgba(76, 175, 80, 0.5)');  // Green gradient for positive aura
+    gradient.addColorStop(0, 'rgba(76, 175, 80, 0.5)');  
     gradient.addColorStop(1, 'rgba(76, 175, 80, 0)');
   } else {
-    gradient.addColorStop(0, 'rgba(244, 67, 54, 0.5)');  // Red gradient for negative aura
+    gradient.addColorStop(0, 'rgba(244, 67, 54, 0.5)');  
     gradient.addColorStop(1, 'rgba(244, 67, 54, 0)');
   }
   return gradient;
@@ -212,7 +212,7 @@ const createGradient = (ctx: CanvasRenderingContext2D, isPositive: boolean) => {
   };
   
 
-  const aura30DaysAgo = auraData.length ? getAura30DaysAgo(auraData) : 'Loading...';
+  const aura30DaysAgo = auraData.length ? getAura30DaysAgo(auraData) : '0';
   const currentAuraValue = current_aura ? current_aura.current_aura : 0;
 const isPositiveAura = currentAuraValue >= 0;
   const auraColorClass = isPositiveAura ? 'text-green-500' : 'text-red-500';
@@ -245,7 +245,7 @@ const isPositiveAura = currentAuraValue >= 0;
               <div className="flex-1 overflow-y-auto">
                 <ul className="space-y-4">
                   {recentActivity.length ? (
-                    recentActivity.map((entry, index) => (
+                    recentActivity.slice().reverse().map((entry, index) => (
                       <li key={index} className="flex justify-between items-center text-lg mr-1">
                         <span className="font-bold flex items-center text-black">
                           <img
@@ -267,6 +267,7 @@ const isPositiveAura = currentAuraValue >= 0;
 
 
 
+
           <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1 max-h-[90%]">
         <p className="font-bold text-gray-700 text-left">Last month you had</p>
         <div className="flex items-center space-x-4">
@@ -275,7 +276,7 @@ const isPositiveAura = currentAuraValue >= 0;
   {aura30DaysAgo}
 </p>
     <span className={`${auraColorClass} text-xl flex items-center`}>
-      {auraData.length ? `${currentAuraValue - parseInt(aura30DaysAgo)} aura` : 'Loading...'}
+      {auraData.length ? `${currentAuraValue - parseInt(aura30DaysAgo)} aura` : '0'}
     </span>
         </div>
         <div className="mt-5 h-64 flex items-center justify-center rounded-lg">

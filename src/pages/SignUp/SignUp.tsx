@@ -25,7 +25,6 @@ const SignUp: React.FC = () => {
 
     const handleSignUp = async (values: FormValues) => {
         try {
-            
             const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
             const user = userCredential.user;
     
@@ -35,27 +34,31 @@ const SignUp: React.FC = () => {
                 username: values.username,
             });
     
-            
+           
             await sendEmailVerification(user);
     
             
             const apiUrl = `https://aura-api-519230006497.europe-west2.run.app/new-user/${values.username}`;
             const postData = {
                 username: values.username,
+                unique_id: user.uid,  
                 current_aura: 0,
                 peek_aura: 0,
-                friends:[],
+                friends: [],
                 dispute: 0,
             };
     
-            await fetch(apiUrl, {
+            const apiResponse = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(postData),
             });
-    
+
+            if (!apiResponse.ok) {
+                throw new Error('API call failed');
+            }
             
             Toastify({
                 text: "Registration successful! Please verify your email.",
@@ -78,7 +81,6 @@ const SignUp: React.FC = () => {
             }).showToast();
         }
     };
-    
     
     
     

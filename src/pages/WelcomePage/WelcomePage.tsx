@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Header from "../../components/Header/Header";
 import welcomePagePicture from '../../assets/welcomePagePicture.png';
 import auraSymbol from '../../assets/auraSymbol.png';
 import Button from '../../components/Button/Button'; 
@@ -8,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import ScrollToTopButton from "../../components/ScrollToTop/ScrollToTop";
 import StarAnimation from "../../components/StarAnimation/StarAnimation";
+import DashboardHeader from "../../components/Header/Header";
 
 const WelcomePage = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -28,7 +28,7 @@ const WelcomePage = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <StarAnimation />
-      <Header />
+      <DashboardHeader />
       <main className={`flex-grow ${isVisible ? 'fade-in' : 'opacity-0'}`}>
         <div className="h-[40%] flex flex-col justify-center items-center text-center mt-5">
           <div>
