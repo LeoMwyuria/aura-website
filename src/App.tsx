@@ -32,11 +32,18 @@ interface NetworkUser {
   change: string;
   image: string;
 }
+interface currentAura {
+  current_aura: number;
+  peek_aura:number;
+  dispute:number;
+
+}
 
 const App: React.FC = () => {
   const [username, setUsername] = useState<string | null>(null);
   const [auraData, setAuraData] = useState<AuraData[]>([]);
   const [networkData, setNetworkData] = useState<NetworkUser[]>([]);
+  const [current_aura,setCurrentAura] = useState<currentAura | null>(null);
 
   useEffect(() => {
     const auth = getAuth();
@@ -73,32 +80,37 @@ const App: React.FC = () => {
         try {
           const response = await fetch(`https://aura-api-519230006497.europe-west2.run.app/dashboard/${username}`);
           const data = await response.json();
-
-          // Assuming the API returns the correct structure
-          const { current_aura, historical_changes } = data;
-
+          console.log(auraData)
+  
+          // Correctly set current_aura and friends
+          const { current_aura, historical_changes, friends } = data;
+  
           setAuraData(historical_changes.map((change: any) => ({
             value: change.aura.toString(),
-            date: new Date(change.event_date).toLocaleDateString()
+            date: new Date(change.event_date).toLocaleDateString(),
           })));
-
-          // Since network data isn't provided in the API response example, handle accordingly
-          setNetworkData(current_aura.friends.map((friend: any) => ({
-            name: friend.username,
-            aura: friend.aura.toString(),
-            change: friend.change,
-            image: userGreen // Placeholder; replace with actual image if available
-          })));
-          
+  
+          setCurrentAura(current_aura); // Update the current aura correctly
+  
+          setNetworkData(friends.map((friend: any) => {
+            const friendAura = parseInt(friend.aura) || 0;
+            const friendChange = parseInt(friend.change) || 0;
+            return {
+              name: friend.username,
+              aura: (friendAura + friendChange).toString(),
+              change: friend.change,
+              image: userGreen,
+            };
+          }));
         } catch (error) {
           console.error('Error fetching data:', error);
         }
       }
     };
-
+  
     fetchData();
   }, [username]);
-
+  
   const auraProgressData = {
     labels: auraData.map((data) => data.date),
     datasets: [
@@ -132,6 +144,22 @@ const App: React.FC = () => {
       },
     },
   };
+  const getAura30DaysAgo = (historical_changes: AuraData[]): string => {
+    const currentDate = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(currentDate.getDate() - 30);
+  
+    const closestEntry = historical_changes.find(change => {
+      const changeDate = new Date(change.date);
+      return changeDate <= thirtyDaysAgo;
+    });
+  
+    return closestEntry ? closestEntry.value : '0';
+  };
+
+  const aura30DaysAgo = auraData.length ? getAura30DaysAgo(auraData) : 'Loading...';
+  const aura30DaysAgoValue = parseInt(aura30DaysAgo, 10);
+  const auraColorClass = aura30DaysAgoValue >= 0 ? 'text-green-500' : 'text-red-500';
 
   return (
     <>
@@ -143,60 +171,63 @@ const App: React.FC = () => {
             <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 border">
               <p className="font-bold text-gray-700 text-left">You have</p>
               <p className="text-4xl font-extrabold text-black flex items-center">
-                <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
-                {auraData.length ? auraData[auraData.length - 1].value : 'Loading...'}
+              <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
+              {current_aura ? current_aura.current_aura : 'Loading...'}
               </p>
+
             </div>
             <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 border">
               <p className="font-bold text-gray-700 text-left">Your personal aura record (PAR)</p>
               <p className="text-4xl font-extrabold text-black flex items-center">
                 <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
-                {auraData.length ? auraData[0].value : 'Loading...'}
+                {current_aura ? current_aura.peek_aura : 'Loading...'}
               </p>
             </div>
-            <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 flex flex-col justify-between border">
-              <p className="font-bold text-gray-700 text-2xl text-left mb-8">Recent aura activity</p>
-              <ul className="space-y-4 overflow-y-auto flex-1">
-                {auraData.length ? (
-                  auraData.map((entry, index) => (
-                    <li key={index} className="flex justify-between items-center text-lg">
-                      <span className="font-bold flex items-center text-black">
-                        <img
-                          src={entry.value.startsWith('-') ? redAuraSymbol : greenAuraSymbol}
-                          alt="Aura Symbol"
-                          className="inline h-6 w-6 mr-2"
-                        />
-                        {entry.value} aura
-                      </span>
-                      <span className="text-gray-600">{entry.date}</span>
-                    </li>
-                  ))
-                ) : (
-                  <li className="text-gray-600">No recent aura activity</li>
-                )}
-              </ul>
-            </div>
-            <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1">
-              <p className="font-bold text-gray-700 text-left">Last month you had</p>
-              <div className="flex items-center space-x-4">
-                <p className="text-4xl font-extrabold text-black flex items-center">
-                  <img src={redAuraSymbol} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
-                  {auraData.length ? auraData[auraData.length - 1].value : 'Loading...'}
-                </p>
-                <span className="text-red-500 text-xl flex items-center">
-                  {/* Placeholder value */}
-                  {auraData.length ? `${parseInt(auraData[auraData.length - 1].value) - 500} aura` : 'Loading...'}
-                </span>
+            <div className="bg-white h-[62%] shadow-md p-6 rounded-3xl col-span-1 row-span-2 flex flex-col justify-between border">
+                <p className="font-bold text-gray-700 text-2xl text-left mb-8">Recent aura activity</p>
+                <div className='overflow-y-auto max-h-[70%]'> 
+                  <ul className="space-y-4  flex-1 overflow-y-auto">
+                    {auraData.length ? (
+                      auraData.map((entry, index) => (
+                        <li key={index} className="flex justify-between items-center text-lg">
+                          <span className="font-bold flex items-center text-black">
+                            <img
+                              src={entry.value.startsWith('-') ? redAuraSymbol : greenAuraSymbol}
+                              alt="Aura Symbol"
+                              className="inline h-6 w-6 mr-2"
+                            />
+                            {entry.value} aura
+                          </span>
+                          <span className="text-gray-600">{entry.date}</span>
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-gray-600">No recent aura activity</li>
+                    )}
+                  </ul>
+                </div>
               </div>
-              <div className="mt-5 h-32 bg-gray-200 flex items-center justify-center">
-                <span className="text-gray-500">Graph Placeholder</span>
-              </div>
-            </div>
+
+              <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1">
+        <p className="font-bold text-gray-700 text-left">Last month you had</p>
+        <div className="flex items-center space-x-4">
+          <p className={`text-4xl font-extrabold flex items-center ${auraColorClass}`}>
+            <img src={aura30DaysAgoValue >= 0 ? greenAuraSymbol : redAuraSymbol} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
+            {aura30DaysAgo}
+          </p>
+          <span className={`${auraColorClass} text-xl flex items-center`}>
+            {auraData.length ? `${parseInt(aura30DaysAgo) + current_aura.current_aura} aura` : 'Loading...'}
+          </span>
+        </div>
+        <div className="mt-5 h-32 bg-gray-200 flex items-center justify-center">
+          <span className="text-gray-500">Graph Placeholder</span>
+        </div>
+      </div>
             <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1">
               <p className="font-bold text-gray-700 text-left">Current aura disputes</p>
               <p className="text-4xl font-extrabold text-black flex items-center">
                 <img src={disputeLogo} alt="Dispute Icon" className="inline h-6 w-6 mr-2" />
-                {auraData.length ? '0' : 'Loading...'}
+                {current_aura ? current_aura.dispute : 'Loading...'}
               </p>
             </div>
           </div>
