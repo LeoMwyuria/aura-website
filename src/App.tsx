@@ -43,7 +43,7 @@ const App: React.FC = () => {
   const [username, setUsername] = useState<string | null>(null);
   const [auraData, setAuraData] = useState<AuraData[]>([]);
   const [networkData, setNetworkData] = useState<NetworkUser[]>([]);
-  const [current_aura,setCurrentAura] = useState<currentAura | null>(null);
+  const [current_aura,setCurrentAura] = useState<currentAura | any>(null);
 
   useEffect(() => {
     const auth = getAuth();
