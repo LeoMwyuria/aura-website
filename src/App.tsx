@@ -1,12 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS, CategoryScale, LinearScale,
   PointElement, LineElement, Title, Tooltip, Legend,
-  ChartData,
-  ChartOptions,
-  Filler,
-  ScriptableContext
+  ChartData, ChartOptions, Filler, ScriptableContext
 } from 'chart.js';
 import { getAuth } from "firebase/auth";
 import { getDatabase, ref, onValue } from "firebase/database";
@@ -23,7 +20,7 @@ import upGraph from './assets/upGraph.png';
 import downGraph from './assets/downGraph.png'; 
 import userGreen from './assets/userGreen.png'
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend,Filler);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 interface AuraData {
   value: string;
@@ -36,11 +33,11 @@ interface NetworkUser {
   change: string;
   image: string;
 }
-interface currentAura {
-  current_aura: number;
-  peek_aura:number;
-  dispute:number;
 
+interface CurrentAura {
+  current_aura: number;
+  peek_aura: number;
+  dispute: number;
 }
 
 const App: React.FC = () => {
@@ -48,9 +45,8 @@ const App: React.FC = () => {
   const [username, setUsername] = useState<string | null>(null);
   const [auraData, setAuraData] = useState<AuraData[]>([]);
   const [networkData, setNetworkData] = useState<NetworkUser[]>([]);
-  const [current_aura,setCurrentAura] = useState<currentAura | any>(null);
+  const [currentAura, setCurrentAura] = useState<CurrentAura | null>(null);
   const [recentActivity, setRecentActivity] = useState<AuraData[]>([]);
-
 
   useEffect(() => {
     const auth = getAuth();
@@ -62,13 +58,7 @@ const App: React.FC = () => {
 
       const unsubscribe = onValue(userRef, (snapshot) => {
         const data = snapshot.val();
-
-        if (data && data.username) {
-          setUsername(data.username);
-        } else {
-          console.error("No username found for this user.");
-          setUsername('No username found');
-        }
+        setUsername(data?.username || 'No username found');
       }, (error) => {
         console.error("Error fetching data:", error);
         setUsername('Error fetching data');
@@ -76,13 +66,11 @@ const App: React.FC = () => {
 
       return () => unsubscribe();
     } else {
-      console.error("No authenticated user found.");
       setUsername('Not authenticated');
     }
   }, []);
 
-  useEffect(() => {
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (username) {
       try {
         const response = await fetch(`https://aura-api-519230006497.europe-west2.run.app/dashboard/${username}`);
@@ -90,15 +78,14 @@ const App: React.FC = () => {
 
         const { current_aura, historical_changes, friends } = data;
 
-        
-        let cumulativeAura = 0;
-        const cumulativeAuraData = historical_changes.map((change: any) => {
-          cumulativeAura += parseInt(change.aura); 
-          return {
-            value: cumulativeAura.toString(), 
+        const cumulativeAuraData = historical_changes.reduce((acc: AuraData[], change: any) => {
+          const lastValue = acc.length ? parseInt(acc[acc.length - 1].value) : 0;
+          acc.push({
+            value: (lastValue + parseInt(change.aura)).toString(),
             date: new Date(change.event_date).toLocaleDateString(),
-          };
-        });
+          });
+          return acc;
+        }, []);
 
         const individualChangesData = historical_changes.map((change: any) => ({
           value: change.aura.toString(),
@@ -106,49 +93,43 @@ const App: React.FC = () => {
         }));
 
         setAuraData(cumulativeAuraData);
-        setRecentActivity(individualChangesData); 
+        setRecentActivity(individualChangesData);
         setCurrentAura(current_aura);
 
-        setNetworkData(friends.map((friend: any) => {
-          const friendAura = parseInt(friend.aura) || 0;
-          const friendChange = parseInt(friend.change) || 0;
-          return {
-            name: friend.username,
-            aura: (friendAura + friendChange).toString(),
-            change: friend.change,
-            image: userGreen,
-          };
-        }));
+        setNetworkData(friends.map((friend: any) => ({
+          name: friend.username,
+          aura: (parseInt(friend.aura) + parseInt(friend.change)).toString(),
+          change: friend.change,
+          image: userGreen,
+        })));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     }
-  };
+  }, [username]);
 
-  fetchData();
-}, [username]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-useEffect(() => {
-  const chart = chartRef.current;
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (chart) {
+      const ctx = chart.ctx;
+      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+      gradient.addColorStop(0, 'rgba(218, 88, 205, 0.5)');
+      gradient.addColorStop(1, 'rgba(218, 88, 205, 0)');
 
-  if (chart) {
-    const ctx = chart.ctx;
-    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(218, 88, 205, 0.5)');
-    gradient.addColorStop(1, 'rgba(218, 88, 205, 0)');
-
-    if (chart.data.datasets[0]) {
-      chart.data.datasets[0].backgroundColor = gradient;
+      if (chart.data.datasets[0]) {
+        chart.data.datasets[0].backgroundColor = gradient;
+      }
+      chart.update();
     }
+  }, [auraData]);
 
-    chart.update();
-  }
-}, [auraData]);
-  
-const auraProgressData: ChartData<'line'> = {
-  labels: auraData.map((data) => data.date),
-  datasets: [
-    {
+  const auraProgressData: ChartData<'line'> = useMemo(() => ({
+    labels: auraData.map((data) => data.date),
+    datasets: [{
       label: 'Aura Progress',
       data: auraData.map((data) => parseInt(data.value)),
       fill: true,
@@ -157,64 +138,40 @@ const auraProgressData: ChartData<'line'> = {
       borderWidth: 2,
       pointRadius: 1.5,
       pointBackgroundColor: '#DA58CD',
+    }],
+  }), [auraData]);
+
+  const auraProgressOptions: ChartOptions<'line'> = useMemo(() => ({
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' as const },
+      filler: { propagate: true },
+      title: { display: true, text: 'Your Aura Progress' },
     },
-  ],
-};
+    scales: { y: { beginAtZero: false } },
+  }), []);
 
+  const createGradient = useCallback((ctx: CanvasRenderingContext2D, isPositive: boolean) => {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    if (isPositive) {
+      gradient.addColorStop(0, 'rgba(76, 175, 80, 0.5)');
+      gradient.addColorStop(1, 'rgba(76, 175, 80, 0)');
+    } else {
+      gradient.addColorStop(0, 'rgba(244, 67, 54, 0.5)');
+      gradient.addColorStop(1, 'rgba(244, 67, 54, 0)');
+    }
+    return gradient;
+  }, []);
 
-
-  
-const auraProgressOptions: ChartOptions<'line'> = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    filler: {
-      propagate: true
-    },
-    title: {
-      display: true,
-      text: 'Your Aura Progress',
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: false,
-    },
-  },
-};
-
-const createGradient = (ctx: CanvasRenderingContext2D, isPositive: boolean) => {
-  const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-  if (isPositive) {
-    gradient.addColorStop(0, 'rgba(76, 175, 80, 0.5)');  
-    gradient.addColorStop(1, 'rgba(76, 175, 80, 0)');
-  } else {
-    gradient.addColorStop(0, 'rgba(244, 67, 54, 0.5)');  
-    gradient.addColorStop(1, 'rgba(244, 67, 54, 0)');
-  }
-  return gradient;
-};
-
-
-  const getAura30DaysAgo = (historical_changes: AuraData[]): string => {
-    const currentDate = new Date();
+  const getAura30DaysAgo = useCallback((historicalChanges: AuraData[]): string => {
     const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(currentDate.getDate() - 30);
-  
-    const closestEntry = historical_changes.find(change => {
-      const changeDate = new Date(change.date);
-      return changeDate <= thirtyDaysAgo;
-    });
-  
-    return closestEntry ? closestEntry.value : '0';
-  };
-  
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    return historicalChanges.find(change => new Date(change.date) <= thirtyDaysAgo)?.value || '0';
+  }, []);
 
-  const aura30DaysAgo = auraData.length ? getAura30DaysAgo(auraData) : '0';
-  const currentAuraValue = current_aura ? current_aura.current_aura : 0;
-const isPositiveAura = currentAuraValue >= 0;
+  const aura30DaysAgo = useMemo(() => auraData.length ? getAura30DaysAgo(auraData) : '0', [auraData, getAura30DaysAgo]);
+  const currentAuraValue = currentAura?.current_aura || 0;
+  const isPositiveAura = currentAuraValue >= 0;
   const auraColorClass = isPositiveAura ? 'text-green-500' : 'text-red-500';
   const auraColorClass1 = isPositiveAura ? 'green' : 'red';
 
@@ -229,7 +186,7 @@ const isPositiveAura = currentAuraValue >= 0;
               <p className="font-bold text-gray-700 text-left">You have</p>
               <p className="text-4xl font-extrabold text-black flex items-center">
               <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
-              {current_aura ? current_aura.current_aura : 'Loading...'}
+              {currentAura ? currentAura.current_aura : 'Loading...'}
               </p>
 
             </div>
@@ -237,7 +194,7 @@ const isPositiveAura = currentAuraValue >= 0;
               <p className="font-bold text-gray-700 text-left">Your personal aura record (PAR)</p>
               <p className="text-4xl font-extrabold text-black flex items-center">
                 <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
-                {current_aura ? current_aura.peek_aura : 'Loading...'}
+                {currentAura ? currentAura.peek_aura : 'Loading...'}
               </p>
             </div>
             <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 flex flex-col justify-between border max-h-[550px]">
@@ -341,7 +298,7 @@ const isPositiveAura = currentAuraValue >= 0;
               <p className="font-bold text-gray-700 text-left">Current aura disputes</p>
               <p className="text-4xl font-extrabold text-black flex items-center">
                 <img src={disputeLogo} alt="Dispute Icon" className="inline h-6 w-6 mr-2" />
-                {current_aura ? current_aura.dispute : 'Loading...'}
+                {currentAura ? currentAura.dispute : 'Loading...'}
               </p>
             </div>
           </div>

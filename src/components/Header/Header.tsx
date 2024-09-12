@@ -168,6 +168,7 @@ const DashboardHeader = () => {
         </div>
       </header>
 
+
       <ProfilePictureUpload
         isOpen={isProfilePicModalOpen}
         onClose={() => setIsProfilePicModalOpen(false)}
