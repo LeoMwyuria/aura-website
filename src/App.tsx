@@ -20,6 +20,7 @@ import upGraph from './assets/upGraph.png';
 import downGraph from './assets/downGraph.png'; 
 import userGreen from './assets/userGreen.png'
 import StarAnimation from './components/StarAnimation/StarAnimation';
+import CommentModal from './components/commentModal/CommentModal';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
@@ -50,6 +51,8 @@ const App: React.FC = () => {
   const [currentAura, setCurrentAura] = useState<CurrentAura | null>(null);
   const [recentActivity, setRecentActivity] = useState<AuraData[]>([]);
   const [showAnimation, setShowAnimation] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState<AuraData | null>(null);
 
   useEffect(() => {
     
@@ -196,6 +199,11 @@ const App: React.FC = () => {
   const auraColorClass = isPositiveAura ? 'text-green-500' : 'text-red-500';
   const auraColorClass1 = isPositiveAura ? 'green' : 'red';
 
+  const handleActivityClick = (activity: AuraData) => {
+    setSelectedActivity(activity);
+    setModalOpen(true);
+  };
+
   return (
     <>
     {showAnimation && <StarAnimation />}
@@ -232,7 +240,7 @@ const App: React.FC = () => {
                       const listItemClass = isLastItem ? 'text-3xl font-bold' : 'text-lg';
 
                       return (
-                        <li key={index} className={`flex items-center border-b border-gray-400 w-[70%] relative group ${listItemClass}`}>
+                        <li key={index}  onClick={() => handleActivityClick(entry)} className={`flex items-center border-b border-gray-400 w-[70%] cursor-pointer relative group ${listItemClass}`}>
                           <span className={`font-bold flex items-center ${auraColorClass}`}>
                             <img
                               src={isPositiveAura ? greenAuraSymbol : redAuraSymbol}
@@ -243,16 +251,6 @@ const App: React.FC = () => {
                           </span>
 
                           {!isLastItem && <span className="text-gray-600 ml-1">{entry.date}</span>}
-
-                          {entry.comment ? (
-                            <div className="absolute hidden group-hover:block bg-custom-purple text-white text-sm rounded-md p-2 left-1/2 transform -translate-x-1/2 max-w-[200px] whitespace-normal">
-                              {entry.comment}
-                            </div>
-                          ) : (
-                            <div className="absolute hidden group-hover:block bg-custom-purple text-white text-sm rounded-md p-2 left-1/2 transform -translate-x-1/2 max-w-[200px] whitespace-normal">
-                              No Comment
-                            </div>
-                          )}
                         </li>
                       );
                     })
@@ -401,6 +399,13 @@ const App: React.FC = () => {
         </section>
       </div>
       <Footer />
+      <CommentModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        date={selectedActivity?.date || ''}
+        comment={selectedActivity?.comment || ''}
+        auraChange={selectedActivity?.value || ''}
+      />
     </>
   );
 };

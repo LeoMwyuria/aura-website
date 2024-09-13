@@ -58,8 +58,14 @@ const UserProfileModal: React.FC<UserProfileModalProps> = ({ user, onClose }) =>
   };
 
   return (
-    <div className=" fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={handleBackgroundClick}>
-      <div className="bg-white p-8 rounded-3xl h-[60%] max-w-md w-full relative border border-gray-400" onClick={(e) => e.stopPropagation()}>
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" 
+      onClick={handleBackgroundClick}
+    >
+      <div 
+        className="bg-white p-8 rounded-3xl h-[60%] max-w-md w-full relative border border-gray-400 modal-scale-in" 
+        onClick={(e) => e.stopPropagation()}
+      >
         <button className="absolute top-4 right-4 text-2xl" onClick={onClose}>×</button>
         <div className="flex flex-col items-center">
           <img src={user.image} alt="User Avatar" className="h-16 w-16 rounded-full mb-4" />
