@@ -19,10 +19,12 @@ import YourNetwork3Logo from './assets/YourNetwork3Logo.png';
 import upGraph from './assets/upGraph.png'; 
 import downGraph from './assets/downGraph.png'; 
 import userGreen from './assets/userGreen.png'
+import StarAnimation from './components/StarAnimation/StarAnimation';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 interface AuraData {
+  comment?: any;
   value: string;
   date: string;
 }
@@ -47,7 +49,23 @@ const App: React.FC = () => {
   const [networkData, setNetworkData] = useState<NetworkUser[]>([]);
   const [currentAura, setCurrentAura] = useState<CurrentAura | null>(null);
   const [recentActivity, setRecentActivity] = useState<AuraData[]>([]);
+  const [showAnimation, setShowAnimation] = useState(false);
 
+  useEffect(() => {
+    
+    const hasVisited = sessionStorage.getItem('hasVisited');
+
+    if (!hasVisited) {
+
+      setShowAnimation(true);
+
+      sessionStorage.setItem('hasVisited', 'true')
+
+      setTimeout(() => {
+        setShowAnimation(false);
+      }, 1700); 
+    }
+  }, []);
   useEffect(() => {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -75,9 +93,9 @@ const App: React.FC = () => {
       try {
         const response = await fetch(`https://aura-api-519230006497.europe-west2.run.app/dashboard/${username}`);
         const data = await response.json();
-
+  
         const { current_aura, historical_changes, friends } = data;
-
+  
         const cumulativeAuraData = historical_changes.reduce((acc: AuraData[], change: any) => {
           const lastValue = acc.length ? parseInt(acc[acc.length - 1].value) : 0;
           acc.push({
@@ -86,16 +104,18 @@ const App: React.FC = () => {
           });
           return acc;
         }, []);
-
+  
+        
         const individualChangesData = historical_changes.map((change: any) => ({
           value: change.aura.toString(),
           date: new Date(change.event_date).toLocaleDateString(),
+          comment: change.comment || '' 
         }));
-
+  
         setAuraData(cumulativeAuraData);
         setRecentActivity(individualChangesData);
         setCurrentAura(current_aura);
-
+  
         setNetworkData(friends.map((friend: any) => ({
           name: friend.username,
           aura: (parseInt(friend.aura) + parseInt(friend.change)).toString(),
@@ -107,6 +127,7 @@ const App: React.FC = () => {
       }
     }
   }, [username]);
+  
 
   useEffect(() => {
     fetchData();
@@ -177,11 +198,12 @@ const App: React.FC = () => {
 
   return (
     <>
+    {showAnimation && <StarAnimation />}
       <DashboardHeader />
       <div className="p-5 bg-gray-100 min-h-screen">
         <section className="text-center mt-10">
           <h1 className="text-4xl font-bold">Welcome back, {username}</h1>
-          <div className="grid grid-cols-2 gap-6 mt-8 w-[50%] max-h-[90%] mx-auto ">
+          <div className="grid grid-cols-2 gap-6 mt-8 w-[45%] max-h-[90%] mx-auto ">
             <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 border">
               <p className="font-bold text-gray-700 text-left">You have</p>
               <p className="text-4xl font-extrabold text-black flex items-center">
@@ -197,30 +219,50 @@ const App: React.FC = () => {
                 {currentAura ? currentAura.peek_aura : 'Loading...'}
               </p>
             </div>
-            <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 flex flex-col justify-between border max-h-[550px]">
+            <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 flex flex-col justify-between border max-h-[550px] ">
               <p className="font-bold text-gray-700 text-2xl text-left mb-8">Recent aura activity</p>
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto overflow-x-hidden">
                 <ul className="space-y-4">
                   {recentActivity.length ? (
-                    recentActivity.slice().reverse().map((entry, index) => (
-                      <li key={index} className="flex justify-between items-center text-lg mr-1">
-                        <span className="font-bold flex items-center text-black">
-                          <img
-                            src={entry.value.startsWith('-') ? redAuraSymbol : greenAuraSymbol}
-                            alt="Aura Symbol"
-                            className="inline h-6 w-6 mr-2"
-                          />
-                          {entry.value} aura
-                        </span>
-                        <span className="text-gray-600">{entry.date}</span>
-                      </li>
-                    ))
+                    recentActivity.slice().reverse().map((entry, index) => {
+                      const isLastItem = index === 0;
+                      const isPositiveAura = !entry.value.startsWith('-');
+                      const auraValue = isPositiveAura ? `+${entry.value}` : entry.value;
+                      const auraColorClass = isPositiveAura ? 'text-green-500' : 'text-red-500';
+                      const listItemClass = isLastItem ? 'text-3xl font-bold' : 'text-lg';
+
+                      return (
+                        <li key={index} className={`flex items-center border-b border-gray-400 w-[70%] relative group ${listItemClass}`}>
+                          <span className={`font-bold flex items-center ${auraColorClass}`}>
+                            <img
+                              src={isPositiveAura ? greenAuraSymbol : redAuraSymbol}
+                              alt="Aura Symbol"
+                              className={isLastItem ? 'w-9 h-9' : 'inline h-6 w-6 mr-2'}
+                            />
+                            {auraValue} aura
+                          </span>
+
+                          {!isLastItem && <span className="text-gray-600 ml-1">{entry.date}</span>}
+
+                          {entry.comment ? (
+                            <div className="absolute hidden group-hover:block bg-custom-purple text-white text-sm rounded-md p-2 left-1/2 transform -translate-x-1/2 max-w-[200px] whitespace-normal">
+                              {entry.comment}
+                            </div>
+                          ) : (
+                            <div className="absolute hidden group-hover:block bg-custom-purple text-white text-sm rounded-md p-2 left-1/2 transform -translate-x-1/2 max-w-[200px] whitespace-normal">
+                              No Comment
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })
                   ) : (
                     <li className="text-gray-600">No recent aura activity</li>
                   )}
                 </ul>
               </div>
             </div>
+
 
 
 

@@ -1,13 +1,14 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Footer from "../../components/Footer/LeaderBoardFooter";
 import leaderboardPicture from '../../assets/leaderboardPicture.png';
 import auralogo from '../../assets/auraSymbol.png';
 import userGreen from '../../assets/userGreen.png';
 import userPurple from '../../assets/userPurple.png';
 import userOrange from '../../assets/userOrange.png';
-import DashboardHeader from "../../components/Header/Header";
+import DashboardHeader from '../../components/Header/Header';
 import { doc, getDoc } from 'firebase/firestore';
 import { firestore } from '../../firebase';
+import UserProfileModal from '../../components/userProfileModal/UserProfileModal';
 
 interface LeaderboardEntry {
   rank: number;
@@ -17,12 +18,14 @@ interface LeaderboardEntry {
   image: string;
 }
 
+
+
 const Leaderboard: React.FC = () => {
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([]);
+  const [selectedUser, setSelectedUser] = useState<LeaderboardEntry | null>(null);  
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Memoized rank styles to prevent re-calculation on each render
   const rankStyles = useMemo(() => (rank: number) => {
     switch (rank) {
       case 1:
@@ -36,7 +39,6 @@ const Leaderboard: React.FC = () => {
     }
   }, []);
 
-  // Fetch profile picture from Firestore
   const fetchProfilePicture = useCallback(async (uid: string) => {
     const userRef = doc(firestore, `users/${uid}`);
     try {
@@ -48,10 +50,8 @@ const Leaderboard: React.FC = () => {
     }
   }, []);
 
-  // Fetch leaderboard data from API
   useEffect(() => {
     const fetchLeaderboardData = async () => {
-      // Use sessionStorage to cache leaderboard data to avoid refetching
       const cachedData = sessionStorage.getItem('leaderboardData');
       if (cachedData) {
         setLeaderboardData(JSON.parse(cachedData));
@@ -63,7 +63,6 @@ const Leaderboard: React.FC = () => {
         const response = await fetch('https://aura-api-519230006497.europe-west2.run.app/world-ranking');
         const jsonData: [string, [number, string]][] = await response.json();
 
-        // Fetch profile pictures in parallel and batch data updates
         const formattedData = await Promise.all(jsonData.map(async (entry, index) => {
           const [name, [aura, unique_id]] = entry;
           const profilePicture = await fetchProfilePicture(unique_id);
@@ -76,11 +75,8 @@ const Leaderboard: React.FC = () => {
           };
         }));
 
-        // Sort the leaderboard by aura and limit to top 10 entries
         const sortedData = formattedData.sort((a, b) => b.aura - a.aura).slice(0, 10);
         setLeaderboardData(sortedData);
-
-        // Cache the sorted leaderboard data
         sessionStorage.setItem('leaderboardData', JSON.stringify(sortedData));
 
         setError(null);
@@ -94,6 +90,14 @@ const Leaderboard: React.FC = () => {
 
     fetchLeaderboardData();
   }, [fetchProfilePicture]);
+
+  const handleUserClick = (user: LeaderboardEntry) => {
+    setSelectedUser(user); 
+  };
+
+  const closeModal = () => {
+    setSelectedUser(null); 
+  };
 
   if (loading) {
     return (
@@ -119,7 +123,11 @@ const Leaderboard: React.FC = () => {
             <div className="relative">
               <div className="flex flex-col">
                 {leaderboardData.map((entry, index) => (
-                  <div key={index} className={`flex items-center justify-between border-b border-gray-300 py-3 px-4 ${entry.rank === leaderboardData.length ? 'pb-16' : ''}`}>
+                  <div 
+                    key={index} 
+                    className={`flex items-center justify-between border-b border-gray-300 py-3 px-4 cursor-pointer ${entry.rank === leaderboardData.length ? 'pb-16' : ''}`}
+                    onClick={() => handleUserClick(entry)}  
+                  >
                     <div className="flex items-center">
                       <span className={`h-7 w-7 flex items-center justify-center rounded-full font-bold ${rankStyles(entry.rank)} border border-solid`}>
                         {entry.rank}
@@ -140,6 +148,8 @@ const Leaderboard: React.FC = () => {
         </div>
       </main>
       <Footer />
+
+      {selectedUser && <UserProfileModal user={selectedUser} onClose={closeModal} />} 
     </div>
   );
 };

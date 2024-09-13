@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute.tsx';
 import AdminPanel from './pages/AdminPanel/AdminPanel.tsx';
 import SignUp from './pages/SignUp/SignUp.tsx';
@@ -12,12 +12,34 @@ import Leaderboard from './pages/Leaderboard/Leaderboard.tsx';
 import VerifyEmail from './pages/VerifyEmail/VerifyEmail.tsx';
 import DetermineYourAura from './pages/DetermineAura/DetermineAura.tsx';
 import { getDatabase, onValue, ref } from 'firebase/database';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import RecoverPassword from './pages/RecoveryPassword/RecoveryPassword.tsx';
+
+const RootRoute = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsLoggedIn(!!user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return <div></div>;
+  }
+
+  return isLoggedIn ? <Navigate to="/dashboard" replace /> : <WelcomePage />;
+};
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <WelcomePage />
+    element: <RootRoute />
   },
   {
     path: "/leaderboard",
