@@ -87,9 +87,9 @@ const SignUp: React.FC = () => {
     return (
         <>
             <SignUpHeader />
-            <div className="ml-auto mr-auto mt-5 p-10 w-[80%] min-h-[80vh] flex flex-row items-center justify-between">
-                <div className="bg-white border-gray-400 shadow-custom w-[40%] flex flex-col justify-center p-8 rounded-3xl mx-auto">
-                    <h2 className="text-3xl mb-8 mx-auto font-bold">Get Started</h2>
+            <div className="mx-auto mt-5 p-4 sm:p-6 md:p-8 lg:p-10 w-full sm:w-[90%] md:w-[80%] min-h-[80vh] flex flex-col items-center justify-center">
+                <div className="bg-white border-gray-400 shadow-custom w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] flex flex-col justify-center p-4 sm:p-6 md:p-8 rounded-3xl mx-auto">
+                    <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 mx-auto font-bold">Get Started</h2>
                     <Formik
                         initialValues={{ email: '', password: '', repeatPassword: '', username: '' }}
                         validate={values => {
@@ -120,61 +120,61 @@ const SignUp: React.FC = () => {
                     >
                         {({ isSubmitting, isValid, dirty }) => (
                             <Form className='flex flex-col'>
-                                <label className="mb-3 font-bold" htmlFor="username">Full Name</label>
-                                <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
-                                    <img src={userIcon} alt="User Icon" className="mr-2" />
+                                <label className="mb-2 sm:mb-3 font-bold" htmlFor="username">Full Name</label>
+                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                    <img src={userIcon} alt="User Icon" className="mr-2 w-4 sm:w-5" />
                                     <Field
                                         id="username"
                                         type="text"
                                         name="username"
                                         placeholder="Third Thimbleton"
-                                        className="w-full focus:outline-none"
+                                        className="w-full focus:outline-none text-sm sm:text-base"
                                     />
-                                    <ErrorMessage name="username" component="div" className="absolute -bottom-6 text-red-500 text-sm" />
+                                    <ErrorMessage name="username" component="div" className="absolute -bottom-5 text-red-500 text-xs sm:text-sm" />
                                 </div>
 
-                                <label className="mb-3 font-bold" htmlFor="email">Email Address</label>
-                                <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
-                                    <img src={emailIcon} alt="Email Icon" className="mr-2" />
+                                <label className="mb-2 sm:mb-3 font-bold" htmlFor="email">Email Address</label>
+                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                    <img src={emailIcon} alt="Email Icon" className="mr-2 w-4 sm:w-5" />
                                     <Field
                                         id="email"
                                         type="email"
                                         name="email"
                                         placeholder="address@site.com"
-                                        className="w-full focus:outline-none"
+                                        className="w-full focus:outline-none text-sm sm:text-base"
                                     />
-                                    <ErrorMessage name="email" component="div" className="absolute -bottom-6 text-red-500 text-sm" />
+                                    <ErrorMessage name="email" component="div" className="absolute -bottom-5 text-red-500 text-xs sm:text-sm" />
                                 </div>
 
-                                <label className="mb-3 font-bold" htmlFor="password">Password</label>
-                                <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
-                                    <img src={passwordIcon} alt="Password Icon" className="mr-2" />
+                                <label className="mb-2 sm:mb-3 font-bold" htmlFor="password">Password</label>
+                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                    <img src={passwordIcon} alt="Password Icon" className="mr-2 w-4 sm:w-5" />
                                     <Field
                                         id="password"
                                         type="password"
                                         name="password"
                                         placeholder="Minimum 8 Characters"
-                                        className="w-full focus:outline-none"
+                                        className="w-full focus:outline-none text-sm sm:text-base"
                                     />
-                                    <ErrorMessage name="password" component="div" className="absolute -bottom-6 text-red-500 text-sm" />
+                                    <ErrorMessage name="password" component="div" className="absolute -bottom-5 text-red-500 text-xs sm:text-sm" />
                                 </div>
 
-                                <label className="mb-3 font-bold" htmlFor="repeatPassword">Confirm Password</label>
-                                <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
-                                    <img src={passwordIcon} alt="Password Icon" className="mr-2" />
+                                <label className="mb-2 sm:mb-3 font-bold" htmlFor="repeatPassword">Confirm Password</label>
+                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                    <img src={passwordIcon} alt="Password Icon" className="mr-2 w-4 sm:w-5" />
                                     <Field
                                         id="repeatPassword"
                                         type="password"
                                         name="repeatPassword"
                                         placeholder="Repeat Password"
-                                        className="w-full focus:outline-none"
+                                        className="w-full focus:outline-none text-sm sm:text-base"
                                     />
-                                    <ErrorMessage name="repeatPassword" component="div" className="absolute -bottom-6 text-red-500 text-sm" />
+                                    <ErrorMessage name="repeatPassword" component="div" className="absolute -bottom-5 text-red-500 text-xs sm:text-sm" />
                                 </div>
 
                                 <button
                                     type="submit"
-                                    className={`bg-black text-white p-3 rounded-3xl mt-2 mb-4 ${isValid && dirty ? 'bg-login-btn-active' : 'bg-login-btn-default cursor-not-allowed'}`}
+                                    className={`bg-black text-white p-2 sm:p-3 rounded-3xl mt-2 mb-4 ${isValid && dirty ? 'bg-login-btn-active' : 'bg-login-btn-default cursor-not-allowed'} text-sm sm:text-base`}
                                     disabled={isSubmitting || !isValid || !dirty}
                                 >
                                     Create new account

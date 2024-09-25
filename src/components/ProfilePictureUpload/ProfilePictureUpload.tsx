@@ -15,6 +15,7 @@ interface ProfilePictureUploadProps {
 
 const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({ isOpen, onClose, onProfilePicChange }) => {
   const [file, setFile] = useState<File | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -33,6 +34,12 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({ isOpen, onC
     fetchUserProfilePicture();
   }, [user]);
 
+  useEffect(() => {
+    if (isOpen) {
+      setIsClosing(false);
+    }
+  }, [isOpen]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
@@ -45,7 +52,7 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({ isOpen, onC
       try {
         await uploadBytes(fileRef, file);
         const url = await getDownloadURL(fileRef);
-        onClose(); 
+        handleClose(); 
         const userDocRef = doc(firestore, `users/${user.uid}`);
         await setDoc(userDocRef, { profilePicture: url }, { merge: true });
         Toastify({
@@ -61,9 +68,17 @@ const ProfilePictureUpload: React.FC<ProfilePictureUploadProps> = ({ isOpen, onC
     }
   };
 
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+      setIsClosing(false);
+    }, 200); 
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="flex flex-col items-center">
+    <Modal isOpen={isOpen} onClose={handleClose}>
+      <div className={`flex flex-col items-center transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'opacity-100'}`}>
         <h2 className="text-xl font-semibold mb-4 text-center">Upload Profile Picture</h2>
         <input
           type="file"

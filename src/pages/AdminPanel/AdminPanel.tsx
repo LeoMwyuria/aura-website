@@ -151,82 +151,81 @@ const AdminPanel: React.FC = () => {
   }, [adminAction]);
 
   return (
-    <div className="border p-5 w-screen h-screen flex flex-row">
-      <div className="border w-[20%] p-5 bg-custom-blue">
-        <div className="flex flex-column justify-between items-center">
-          {/* <ProfilePictureUpload /> */}
+    <div className="border p-2 sm:p-5 w-screen h-screen flex flex-col sm:flex-row">
+      <div className="border w-full sm:w-[30%] lg:w-[20%] p-3 sm:p-5 bg-custom-blue">
+        <div className="flex flex-col sm:flex-row justify-between items-center">
           <div>
-            <p className='font-semibold mr-9'>
+            <p className='font-semibold mr-0 sm:mr-9'>
               {username ? username : 'Loading...'}
             </p>
           </div>
         </div>
         <button
           onClick={handleSignOut}
-          className="bg-black text-white px-4 py-2 rounded mt-2"
+          className="bg-black text-white px-4 py-2 rounded mt-2 w-full sm:w-auto"
         >
           Sign Out
         </button>
-        <div className='mt-2'>
+        <div className='mt-4'>
           <p className='font-semibold'>Admin Tools</p>
           <div className='flex flex-col'>
             <Button
               label='Update Aura'
               onClick={() => setAdminAction(AdminAction.UpdateAura)}
-              className={`p-2 rounded ${adminAction === AdminAction.UpdateAura ? 'bg-white text-black' : 'bg-black text-white'} mt-2`}
+              className={`p-2 rounded ${adminAction === AdminAction.UpdateAura ? 'bg-white text-black' : 'bg-black text-white'} mt-2 w-full`}
             />
             <Button
               label='Ban User'
               onClick={() => setAdminAction(AdminAction.BanUser)}
-              className={`p-2 rounded ${adminAction === AdminAction.BanUser ? 'bg-white text-black' : 'bg-black text-white'} mt-2`}
+              className={`p-2 rounded ${adminAction === AdminAction.BanUser ? 'bg-white text-black' : 'bg-black text-white'} mt-2 w-full`}
             />
           </div>
         </div>
       </div>
-      <div className="w-[80%] p-4 flex flex-col items-center justify-center">
+      <div className="w-full sm:w-[70%] lg:w-[80%] p-4 flex flex-col items-center justify-center">
         {adminAction === AdminAction.UpdateAura && (
-          <div className='flex flex-row justify-between border w-[80%]'>
-            <div className='bg-gray-200 p-2 border-b border-b-gray-500'>
-              <span className="w-1/4 font-semibold">Target Username </span>
+          <div className='flex flex-col sm:flex-row justify-between border w-full sm:w-[90%] lg:w-[80%]'>
+            <div className='bg-gray-200 p-2 border-b border-b-gray-500 w-full sm:w-1/3'>
+              <span className="w-full font-semibold">Target Username </span>
               <input
                 type="text"
                 value={usernameToUpdate}
                 onChange={(e) => setUsernameToUpdate(e.target.value)}
-                className="p-2 w-[60%] mt-2 bg-gray-200"
+                className="p-2 w-full mt-2 bg-gray-200"
                 placeholder="Enter the username"
               />
             </div>
-            <div className='bg-gray-200 p-2 border-b border-b-gray-500'>
+            <div className='bg-gray-200 p-2 border-b border-b-gray-500 w-full sm:w-1/3'>
               <span className='font-semibold'>Comment </span>
               <input
                 type="text"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                className="p-2 w-[70%] mt-2 bg-gray-200"
+                className="p-2 w-full mt-2 bg-gray-200"
                 placeholder="Enter a comment"
               />
             </div>
-            <div className='bg-gray-200 p-2 border-b border-b-gray-500'>
+            <div className='bg-gray-200 p-2 border-b border-b-gray-500 w-full sm:w-1/3'>
               <span className='font-semibold'>Points </span>
               <input
                 type="number"
                 value={points}
                 onChange={(e) => setPoints(Number(e.target.value))}
-                className="p-2 w-[70%] mt-2 bg-gray-200"
+                className="p-2 w-full mt-2 bg-gray-200"
                 placeholder="Enter the aura points"
               />
             </div>
           </div>
         )}
         {adminAction === AdminAction.BanUser && (
-          <div className='flex flex-row justify-between border w-[80%]'>
-            <div className='bg-gray-200 p-2 border-b border-b-gray-500 ml-auto mr-auto'>
+          <div className='flex flex-row justify-between border w-full sm:w-[90%] lg:w-[80%]'>
+            <div className='bg-gray-200 p-2 border-b border-b-gray-500 w-full'>
               <span className="w-1/4 font-semibold">Target Username </span>
               <input
                 type="text"
                 value={usernameToUpdate}
                 onChange={(e) => setUsernameToUpdate(e.target.value)}
-                className="p-2 w-[60%] mt-2 bg-gray-200"
+                className="p-2 w-full mt-2 bg-gray-200"
                 placeholder="Enter the username"
               />
             </div>
@@ -235,7 +234,7 @@ const AdminPanel: React.FC = () => {
         {adminAction === AdminAction.UpdateAura && (
           <button
             onClick={handlePostRequest}
-            className="bg-black w-[15%] text-white px-4 py-2 rounded mt-2"
+            className="bg-black w-full sm:w-[30%] lg:w-[15%] text-white px-4 py-2 rounded mt-4"
           >
             Update Aura
           </button>
@@ -243,7 +242,7 @@ const AdminPanel: React.FC = () => {
         {adminAction === AdminAction.BanUser && (
           <button
             onClick={handleBanUser}
-            className="bg-black w-[15%] text-white px-4 py-2 rounded mt-4"
+            className="bg-black w-full sm:w-[30%] lg:w-[15%] text-white px-4 py-2 rounded mt-4"
           >
             Ban User
           </button>

@@ -208,49 +208,47 @@ const App: React.FC = () => {
     <>
     {showAnimation && <StarAnimation />}
       <DashboardHeader />
-      <div className="p-5 bg-gray-100 min-h-screen">
-        <section className="text-center mt-10">
-          <h1 className="text-4xl font-bold">Welcome back, {username}</h1>
-          <div className="grid grid-cols-2 gap-6 mt-8 w-[45%] max-h-[90%] mx-auto ">
-            <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 border">
+      <div className="p-2 sm:p-5 bg-gray-100 min-h-screen">
+        <section className="text-center mt-4 sm:mt-10 animate-fadeIn">
+          <h1 className="text-2xl sm:text-4xl font-bold">Welcome back, {username}</h1>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-8 w-full sm:w-[90%] lg:w-[70%] xl:w-[60%] max-h-[90%] mx-auto">
+            <div className="bg-white shadow-md p-4 sm:p-6 rounded-3xl col-span-1 sm:row-span-2 border">
               <p className="font-bold text-gray-700 text-left">You have</p>
-              <p className="text-4xl font-extrabold text-black flex items-center">
-              <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
-              {currentAura ? currentAura.current_aura : 'Loading...'}
+              <p className="text-2xl sm:text-4xl font-extrabold text-black flex items-center">
+                <img src={auralogo} alt="Aura Symbol" className="inline h-4 w-4 sm:h-6 sm:w-6 mr-2" />
+                {currentAura ? currentAura.current_aura : 'Loading...'}
               </p>
-
             </div>
-            <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 border">
+            <div className="bg-white shadow-md p-4 sm:p-6 rounded-3xl col-span-1 sm:row-span-2 border">
               <p className="font-bold text-gray-700 text-left">Your personal aura record (PAR)</p>
-              <p className="text-4xl font-extrabold text-black flex items-center">
-                <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
+              <p className="text-2xl sm:text-4xl font-extrabold text-black flex items-center">
+                <img src={auralogo} alt="Aura Symbol" className="inline h-4 w-4 sm:h-6 sm:w-6 mr-2" />
                 {currentAura ? currentAura.peek_aura : 'Loading...'}
               </p>
             </div>
-            <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-2 flex flex-col justify-between border max-h-[550px] ">
-              <p className="font-bold text-gray-700 text-2xl text-left mb-8">Recent aura activity</p>
+            <div className="bg-white shadow-md p-4 sm:p-6 rounded-3xl col-span-1 sm:row-span-2 flex flex-col justify-between border max-h-[350px] sm:max-h-[550px]">
+              <p className="font-bold text-gray-700 text-xl sm:text-2xl text-left mb-4 sm:mb-8">Recent aura activity</p>
               <div className="flex-1 overflow-y-auto overflow-x-hidden">
-                <ul className="space-y-4">
+                <ul className="space-y-2 sm:space-y-4">
                   {recentActivity.length ? (
                     recentActivity.slice().reverse().map((entry, index) => {
                       const isLastItem = index === 0;
                       const isPositiveAura = !entry.value.startsWith('-');
                       const auraValue = isPositiveAura ? `+${entry.value}` : entry.value;
                       const auraColorClass = isPositiveAura ? 'text-green-500' : 'text-red-500';
-                      const listItemClass = isLastItem ? 'text-3xl font-bold' : 'text-lg';
+                      const listItemClass = isLastItem ? 'text-xl sm:text-3xl font-bold' : 'text-base sm:text-lg';
 
                       return (
-                        <li key={index}  onClick={() => handleActivityClick(entry)} className={`flex items-center border-b border-gray-400 w-[70%] cursor-pointer relative group ${listItemClass}`}>
+                        <li key={index} onClick={() => handleActivityClick(entry)} className={`flex items-center border-b border-gray-400 w-full sm:w-[90%] cursor-pointer relative group ${listItemClass}`}>
                           <span className={`font-bold flex items-center ${auraColorClass}`}>
                             <img
                               src={isPositiveAura ? greenAuraSymbol : redAuraSymbol}
                               alt="Aura Symbol"
-                              className={isLastItem ? 'w-9 h-9' : 'inline h-6 w-6 mr-2'}
+                              className={isLastItem ? 'w-6 h-6 sm:w-9 sm:h-9' : 'inline h-4 w-4 sm:h-6 sm:w-6 mr-2'}
                             />
                             {auraValue} aura
                           </span>
-
-                          {!isLastItem && <span className="text-gray-600 ml-1">{entry.date}</span>}
+                          {!isLastItem && <span className="text-gray-600 ml-1 text-sm sm:text-base">{entry.date}</span>}
                         </li>
                       );
                     })
@@ -260,131 +258,126 @@ const App: React.FC = () => {
                 </ul>
               </div>
             </div>
-
-
-
-
-
-          <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1 max-h-[90%]">
-        <p className="font-bold text-gray-700 text-left">Last month you had</p>
-        <div className="flex items-center space-x-4">
-        <p className={`text-4xl font-extrabold flex items-center`}>
-  <img src={auralogo} alt="Aura Symbol" className="inline h-6 w-6 mr-2" />
-  {aura30DaysAgo}
-</p>
-    <span className={`${auraColorClass} text-xl flex items-center`}>
-      {auraData.length ? `${currentAuraValue - parseInt(aura30DaysAgo)} aura` : '0'}
-    </span>
-        </div>
-        <div className="mt-5 h-64 flex items-center justify-center rounded-lg">
-        {auraData.length > 0 ? (
-          <Line
-            data={{
-              labels: auraData.map((entry) => entry.date),
-              datasets: [{
-                label: 'Aura Progress',
-                data: auraData.map((entry) => parseInt(entry.value)),
-                fill: true,
-                backgroundColor: (context: ScriptableContext<"line">) => {
-                  const { ctx } = context.chart;
-                  return createGradient(ctx, isPositiveAura);
-                },
-                borderColor: auraColorClass1,
-                borderWidth: 2,
-                pointRadius: 0,
-              }],
-            }}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: {
-                  display: false,
-                },
-                title: {
-                  display: false,
-                },
-              },
-              scales: {
-                x: {
-                  display: false,
-                },
-                y: {
-                  display: true,
-                  beginAtZero: false,
-                },
-              },
-              elements: {
-                line: {
-                  borderJoinStyle: 'round',
-                },
-              },
-              layout: {
-                padding: {
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  bottom: 0,
-                },
-              },
-            }}
-          />
-        ) : (
-          <span className="text-gray-500">No data available</span>
-        )}
-      </div>
-
-      </div>
-            <div className="bg-white shadow-md p-6 rounded-3xl col-span-1 row-span-1">
+            <div className="bg-white shadow-md p-4 sm:p-6 rounded-3xl col-span-1 row-span-1 max-h-[90%]">
+              <p className="font-bold text-gray-700 text-left">Last month you had</p>
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <p className={`text-2xl sm:text-4xl font-extrabold flex items-center`}>
+                  <img src={auralogo} alt="Aura Symbol" className="inline h-4 w-4 sm:h-6 sm:w-6 mr-2" />
+                  {aura30DaysAgo}
+                </p>
+                <span className={`${auraColorClass} text-base sm:text-xl flex items-center`}>
+                  {auraData.length ? `${currentAuraValue - parseInt(aura30DaysAgo)} aura` : '0'}
+                </span>
+              </div>
+              <div className="mt-2 sm:mt-5 h-48 sm:h-64 flex items-center justify-center rounded-lg">
+                {auraData.length > 0 ? (
+                  <Line
+                    data={{
+                      labels: auraData.map((entry) => entry.date),
+                      datasets: [{
+                        label: 'Aura Progress',
+                        data: auraData.map((entry) => parseInt(entry.value)),
+                        fill: true,
+                        backgroundColor: (context: ScriptableContext<"line">) => {
+                          const { ctx } = context.chart;
+                          return createGradient(ctx, isPositiveAura);
+                        },
+                        borderColor: auraColorClass1,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                      }],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          display: false,
+                        },
+                        title: {
+                          display: false,
+                        },
+                      },
+                      scales: {
+                        x: {
+                          display: false,
+                        },
+                        y: {
+                          display: true,
+                          beginAtZero: false,
+                        },
+                      },
+                      elements: {
+                        line: {
+                          borderJoinStyle: 'round',
+                        },
+                      },
+                      layout: {
+                        padding: {
+                          left: 0,
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                        },
+                      },
+                    }}
+                  />
+                ) : (
+                  <span className="text-gray-500">No data available</span>
+                )}
+              </div>
+            </div>
+            <div className="bg-white shadow-md p-4 sm:p-6 rounded-3xl col-span-1 row-span-1">
               <p className="font-bold text-gray-700 text-left">Current aura disputes</p>
-              <p className="text-4xl font-extrabold text-black flex items-center">
-                <img src={disputeLogo} alt="Dispute Icon" className="inline h-6 w-6 mr-2" />
+              <p className="text-2xl sm:text-4xl font-extrabold text-black flex items-center">
+                <img src={disputeLogo} alt="Dispute Icon" className="inline h-4 w-4 sm:h-6 sm:w-6 mr-2" />
                 {currentAura ? currentAura.dispute : 'Loading...'}
               </p>
             </div>
           </div>
         </section>
 
-        <section className="text-center mt-10">
-          <img src={threeAuraLogo} className="mx-auto mb-5" alt="Aura Progress Logo" />
-          <h2 className="text-2xl font-bold">Your aura progress</h2>
-          <p className="text-gray-600">Track how your aura changes throughout time.</p>
-          <div className="mt-5 w-[50%] mx-auto flex flex-col justify-center items-end">
-          <Line ref={chartRef} data={auraProgressData} options={auraProgressOptions} />
-            <button className="bg-black text-white py-2 mt-4 rounded-3xl w-[10%] text-sm">Dispute</button>
+        <section className="text-center mt-6 sm:mt-10">
+          <img src={threeAuraLogo} className="mx-auto mb-3 sm:mb-5 h-8 sm:h-auto" alt="Aura Progress Logo" />
+          <h2 className="text-xl sm:text-2xl font-bold">Your aura progress</h2>
+          <p className="text-sm sm:text-base text-gray-600">Track how your aura changes throughout time.</p>
+          <div className="mt-3 sm:mt-5 w-full sm:w-[90%] lg:w-[70%] xl:w-[60%] mx-auto flex flex-col justify-center items-end">
+            <Line ref={chartRef} data={auraProgressData} options={auraProgressOptions} />
+            <button className="bg-black text-white py-1 sm:py-2 mt-2 sm:mt-4 rounded-3xl w-[20%] sm:w-[10%] text-xs sm:text-sm">Dispute</button>
           </div>
         </section>
 
-        <section className="text-center mt-10 mb-5">
-          <img src={YourNetwork3Logo} className="mx-auto mb-5" alt="Your Network Logo" />
-          <h2 className="text-2xl font-bold">Your network</h2>
-          <p className="text-gray-600">See how your friends' aura is changing.</p>
-          <div className="bg-white shadow-md p-6 rounded-3xl mt-5 w-[30%] mx-auto">
+        <section className="text-center mt-6 sm:mt-10 mb-3 sm:mb-5">
+          <img src={YourNetwork3Logo} className="mx-auto mb-3 sm:mb-5 h-8 sm:h-auto" alt="Your Network Logo" />
+          <h2 className="text-xl sm:text-2xl font-bold">Your network</h2>
+          <p className="text-sm sm:text-base text-gray-600">See how your friends' aura is changing.</p>
+          <div className="bg-white shadow-md p-4 sm:p-6 rounded-3xl mt-3 sm:mt-5 w-full sm:w-[90%] lg:w-[70%] xl:w-[50%] mx-auto">
             {networkData.length > 0 ? (
               <table className="w-full text-left">
                 <tbody>
                   {networkData.map((user, index) => (
                     <tr key={index} className="border-b">
-                      <td className="py-2 text-sm font-bold text-gray-600">
+                      <td className="py-1 sm:py-2 text-xs sm:text-sm font-bold text-gray-600">
                         {index + 1}
                       </td>
-                      <td className="py-2">
+                      <td className="py-1 sm:py-2">
                         <img
                           src={user.image}
                           alt="User Avatar"
-                          className="h-8 w-8 rounded-full border border-gray-300 mr-2"
+                          className="h-6 w-6 sm:h-8 sm:w-8 rounded-full border border-gray-300 mr-1 sm:mr-2"
                         />
                       </td>
-                      <td className="py-2 text-lg">{user.name}</td>
-                      <td className="py-2 flex items-center justify-between text-lg">
+                      <td className="py-1 sm:py-2 text-sm sm:text-lg">{user.name}</td>
+                      <td className="py-1 sm:py-2 flex items-center justify-between text-sm sm:text-lg">
                         <div>
-                          <img src={auralogo} alt="Aura Logo" className="inline h-4 w-4 mr-1" />
+                          <img src={auralogo} alt="Aura Logo" className="inline h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                           {user.aura} aura
                         </div>
                         <div>
                           {user.change.startsWith('-') ? (
-                            <img src={downGraph} alt="Downward Trend" className="h-6 w-6" />
+                            <img src={downGraph} alt="Downward Trend" className="h-4 w-4 sm:h-6 sm:w-6" />
                           ) : (
-                            <img src={upGraph} alt="Upward Trend" className="h-6 w-6" />
+                            <img src={upGraph} alt="Upward Trend" className="h-4 w-4 sm:h-6 sm:w-6" />
                           )}
                         </div>
                       </td>

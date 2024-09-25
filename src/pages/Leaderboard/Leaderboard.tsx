@@ -114,10 +114,10 @@ const Leaderboard: React.FC = () => {
   return (
     <div className="relative min-h-screen">
       <DashboardHeader />
-      <main className="flex flex-col flex-grow pb-10"> 
+      <main className="flex flex-col flex-grow pb-10 px-4 sm:px-6 lg:px-8"> 
         <div className="flex flex-col justify-center items-center py-4">
-          <img src={leaderboardPicture} className="w-[11%] mx-auto" alt="Leaderboard" />
-          <p className="text-4xl font-semibold mx-auto">Worldwide Aura Leaderboard</p>
+          <img src={leaderboardPicture} className="w-24 sm:w-32 md:w-40 lg:w-48 mx-auto" alt="Leaderboard" />
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold mx-auto text-center mt-4">Worldwide Aura Leaderboard</h1>
           
           <div className="mt-8 w-full max-w-xl mx-auto border border-gray-300 rounded-t-3xl shadow-custom p-4 relative z-10">
             <div className="relative">
@@ -125,20 +125,20 @@ const Leaderboard: React.FC = () => {
                 {leaderboardData.map((entry, index) => (
                   <div 
                     key={index} 
-                    className={`flex items-center justify-between border-b border-gray-300 py-3 px-4 cursor-pointer ${entry.rank === leaderboardData.length ? 'pb-16' : ''}`}
+                    className={`flex items-center justify-between border-b border-gray-300 py-3 px-2 sm:px-4 cursor-pointer ${entry.rank === leaderboardData.length ? 'pb-16' : ''}`}
                     onClick={() => handleUserClick(entry)}  
                   >
                     <div className="flex items-center">
-                      <span className={`h-7 w-7 flex items-center justify-center rounded-full font-bold ${rankStyles(entry.rank)} border border-solid`}>
+                      <span className={`h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center rounded-full font-bold ${rankStyles(entry.rank)} border border-solid text-xs sm:text-base`}>
                         {entry.rank}
                       </span>
                       
-                      <img loading="lazy" src={entry.image} alt="User Avatar" className="h-8 w-8 rounded-full border border-gray-300 mx-4" />
-                      <span className="text-lg font-bold">{entry.name}</span>
+                      <img loading="lazy" src={entry.image} alt="User Avatar" className="h-6 w-6 sm:h-8 sm:w-8 rounded-full border border-gray-300 mx-2 sm:mx-4" />
+                      <span className="text-sm sm:text-lg font-bold truncate max-w-[100px] sm:max-w-[150px] md:max-w-[200px]">{entry.name}</span>
                     </div>
                     <div className="flex items-center">
-                      <span className="text-sm font-bold mr-2">{entry.aura}</span>
-                      <img src={auralogo} alt="Aura Logo" className="h-6 w-6 mr-2" />
+                      <span className="text-xs sm:text-sm font-bold mr-1 sm:mr-2">{entry.aura}</span>
+                      <img src={auralogo} alt="Aura Logo" className="h-4 w-4 sm:h-6 sm:w-6" />
                     </div>
                   </div>
                 ))}

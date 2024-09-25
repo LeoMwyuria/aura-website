@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -9,30 +9,44 @@ interface ModalProps {
 }
 
 const CommentModal: React.FC<ModalProps> = ({ isOpen, onClose, date, comment, auraChange }) => {
-  if (!isOpen) return null;
+  const [isClosing, setIsClosing] = useState(false);
 
-  
-  const formattedAuraChange = Number(auraChange) > 0 ? `+${auraChange}` : auraChange;
-
+  useEffect(() => {
+    if (!isOpen) {
+      setIsClosing(false); // Reset closing state if modal is reopened
+    }
+  }, [isOpen]);
 
   const handleOverlayClick = (e: React.MouseEvent) => {
-    
     if (e.target === e.currentTarget) {
-      onClose();
+      triggerClose();
     }
   };
 
+  const triggerClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose(); // Close the modal after the fade-out animation
+    }, 200); // Match duration with the fade-out animation
+  };
+
+  if (!isOpen && !isClosing) return null;
+
+  const formattedAuraChange = Number(auraChange) > 0 ? `+${auraChange}` : auraChange;
+
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center"
-      onClick={handleOverlayClick} 
+      onClick={handleOverlayClick}
     >
       <div
-        className="bg-white p-6 rounded-lg shadow-lg max-w-full relative modal-enter" 
-        onClick={(e) => e.stopPropagation()} 
+        className={`bg-white p-6 rounded-lg shadow-lg max-w-full relative ${
+          isClosing ? 'modal-fade-out' : 'modal-enter'
+        }`}
+        onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing the modal
       >
         <button
-          onClick={onClose}
+          onClick={triggerClose}
           className="text-custom-purple rounded-lg float-right"
         >
           X

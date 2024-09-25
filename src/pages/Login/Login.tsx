@@ -55,9 +55,9 @@ const Login: React.FC = () => {
     return (
         <>
             <LogInHeader />
-            <div className="ml-auto mr-auto mt-5 p-10 w-[80%] min-h-[80vh] flex flex-row items-center justify-between">
-                <div className="bg-white border-gray-400 shadow-custom w-[40%] flex flex-col justify-center p-8 rounded-3xl mx-auto">
-                    <h2 className="text-3xl mb-8 mx-auto font-bold">Your Aura is Waiting...</h2>
+            <div className="mx-auto mt-5 p-4 sm:p-6 md:p-8 lg:p-10 w-full sm:w-[90%] md:w-[80%] min-h-[80vh] flex flex-col items-center justify-center">
+                <div className="bg-white border-gray-400 shadow-custom w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] flex flex-col justify-center p-4 sm:p-6 md:p-8 rounded-3xl mx-auto">
+                    <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 mx-auto font-bold">Your Aura is Waiting...</h2>
                     <Formik
                         initialValues={{ email: '', password: '' }}
                         validate={values => {
@@ -78,45 +78,44 @@ const Login: React.FC = () => {
                     >
                         {({ isSubmitting, isValid, dirty }) => (
                             <Form className="flex flex-col">
-                                <label className="mb-3 font-bold" htmlFor="email">Email</label>
-                                <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
-                                    <img src={emailIcon} alt="Email Icon" className="h-5 w-5 mr-2" />
+                                <label className="mb-2 sm:mb-3 font-bold" htmlFor="email">Email</label>
+                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                    <img src={emailIcon} alt="Email Icon" className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                     <Field
                                         id="email"
                                         type="email"
                                         name="email"
-                                        className="w-full focus:outline-none"
+                                        className="w-full focus:outline-none text-sm sm:text-base"
                                         placeholder="address@site.com"
                                     />
-                                    <ErrorMessage name="email" component="div" className="absolute -bottom-6 left-0 text-red-500 text-sm" />
+                                    <ErrorMessage name="email" component="div" className="absolute -bottom-5 left-0 text-red-500 text-xs sm:text-sm" />
                                 </div>
 
-                                <label className="mb-3 font-bold" htmlFor="password">Password</label>
-                                <div className="relative flex items-center mb-5 p-3 border border-gray-400 shadow-custom rounded-3xl">
-                                    <img src={passwordIcon} alt="Password Icon" className="h-5 w-5 mr-2" />
+                                <label className="mb-2 sm:mb-3 font-bold" htmlFor="password">Password</label>
+                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                    <img src={passwordIcon} alt="Password Icon" className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                     <Field
                                         id="password"
                                         type="password"
                                         name="password"
-                                        className="w-full focus:outline-none"
+                                        className="w-full focus:outline-none text-sm sm:text-base"
                                         placeholder="Minimum 8 Characters"
                                     />
-                                    <ErrorMessage name="password" component="div" className="absolute -bottom-6 left-0 text-red-500 text-sm" />
+                                    <ErrorMessage name="password" component="div" className="absolute -bottom-5 left-0 text-red-500 text-xs sm:text-sm" />
                                 </div>
 
-                                {loginError && <div className="text-red-500 mb-4">{loginError}</div>}
-                                {isSubmitting && <div className="text-gray-500 mb-4">Logging in...</div>}
+                                {loginError && <div className="text-red-500 mb-4 text-sm">{loginError}</div>}
+                                {isSubmitting && <div className="text-gray-500 mb-4 text-sm">Logging in...</div>}
                                 <button
                                     type="submit"
-                                    className={`p-3 rounded-3xl mt-3 mb-4 ${dirty && isValid ? 'bg-login-btn-active cursor-pointer' : 'bg-login-btn-default cursor-not-allowed'} text-white`}
+                                    className={`p-2 sm:p-3 rounded-3xl mt-3 mb-4 ${dirty && isValid ? 'bg-login-btn-active cursor-pointer' : 'bg-login-btn-default cursor-not-allowed'} text-white text-sm sm:text-base`}
                                     disabled={isSubmitting || !isValid || !dirty}
                                 >
                                     Continue
                                 </button>
 
-                                
                                 <div className="text-center mt-4">
-                                    <Link to="/recover-password" className="text-sm text-gray-600 hover:text-purple-500">
+                                    <Link to="/recover-password" className="text-xs sm:text-sm text-gray-600 hover:text-purple-500">
                                         Forgot Password?
                                     </Link>
                                 </div>
