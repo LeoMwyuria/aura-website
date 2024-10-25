@@ -10,6 +10,7 @@ import { getDatabase, ref,  set } from "firebase/database";
 import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css';
 import SignUpHeader from '../../components/Header/SignUpHeader';
+import lionImage from '../../assets/lion.png'
 
 interface FormValues {
     email: string;
@@ -87,7 +88,7 @@ const SignUp: React.FC = () => {
     return (
         <>
             <SignUpHeader />
-            <div className="mx-auto mt-5 p-4 sm:p-6 md:p-8 lg:p-10 w-full sm:w-[90%] md:w-[80%] min-h-[80vh] flex flex-col items-center justify-center">
+            <div className="mx-auto mt-5 p-4 sm:p-6 md:p-8 lg:p-10 w-full sm:w-[90%] md:w-[80%] min-h-[80vh] flex  items-center justify-center">
                 <div className="bg-white border-gray-400 shadow-custom w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] flex flex-col justify-center p-4 sm:p-6 md:p-8 rounded-3xl mx-auto">
                     <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 mx-auto font-bold">Get Started</h2>
                     <Formik
@@ -183,6 +184,7 @@ const SignUp: React.FC = () => {
                         )}
                     </Formik>
                 </div>
+                <img className='absolute left-[60%] hidden lg:block w-[35%]' src={lionImage} alt="Lion" />
             </div>
         </>
     );

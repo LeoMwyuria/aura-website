@@ -1,4 +1,4 @@
-import logo_white from '../../assets/logo_white.png';
+import logo_white from '../../assets/GlamouraFooter.png';
 
 const Footer = () => {
   return (
@@ -7,11 +7,11 @@ const Footer = () => {
         <div className="flex items-center mb-4 sm:mb-0">
           <img src={logo_white} alt="Website Logo" className="h-6 sm:h-8 mr-4" />
           <div className="text-white text-sm sm:text-base">
-            <p>© 2024 AuraNet. This is not a real website.</p>
+            <p>© 2024 Glamoura. All rights reserved.</p>
           </div>
         </div>
         <div className="text-white text-xs sm:text-sm w-full sm:w-[20%] text-center sm:text-right">
-          <p>AuraNet is not responsible for any damage done to your body due to the excessive amount of aura that you may absorb during your visit here.</p>
+          <p>Glamoura is not responsible for any damage done to your body due to the excessive amount of aura that you may absorb during your visit here.</p>
         </div>
       </div>
     </footer>

@@ -2,12 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  cursor: url("./assets/star-4pt-round.png"), auto;
+}
+
 input {
   outline: 0;
 }
 
 body {
   background-color: white;
+  background-image: url('./assets/AuraBackground.png');
   font-family: 'Inter', sans-serif;
   font-size: 22px;
   margin: 0;

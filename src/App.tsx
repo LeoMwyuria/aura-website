@@ -22,6 +22,7 @@ import userGreen from './assets/userGreen.png'
 import StarAnimation from './components/StarAnimation/StarAnimation';
 import CommentModal from './components/commentModal/CommentModal';
 
+
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 interface AuraData {
@@ -206,6 +207,7 @@ const App: React.FC = () => {
 
   return (
     <>
+
     {showAnimation && <StarAnimation />}
       <DashboardHeader />
       <div className="p-2 sm:p-5 bg-gray-100 min-h-screen">

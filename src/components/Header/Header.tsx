@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { getDatabase, ref, get } from 'firebase/database';
 import { doc, getDoc } from 'firebase/firestore';
-import AuraNet from '../../assets/AuraNet.png';
+import AuraNet from '../../assets/GlamouraLogo.png';
 import userPurple from '../../assets/userPurple.png';
 import ProfilePictureUpload from '../ProfilePictureUpload/ProfilePictureUpload';
 import { firestore } from '../../firebase';

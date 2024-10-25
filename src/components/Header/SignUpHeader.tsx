@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import AuraNet from '../../assets/AuraNet.png';
+import AuraNet from '../../assets/GlamouraLogo.png';
 
 const SignUpHeader = () => {
   const navigate = useNavigate();

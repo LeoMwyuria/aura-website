@@ -43,7 +43,7 @@ const CommentModal: React.FC<ModalProps> = ({ isOpen, onClose, date, comment, au
         className={`bg-white p-6 rounded-lg shadow-lg max-w-full relative ${
           isClosing ? 'modal-fade-out' : 'modal-enter'
         }`}
-        onClick={(e) => e.stopPropagation()} // Prevent clicks inside from closing the modal
+        onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={triggerClose}
