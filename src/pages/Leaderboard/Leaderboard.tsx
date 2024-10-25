@@ -116,10 +116,10 @@ const Leaderboard: React.FC = () => {
       <DashboardHeader />
       <main className="flex flex-col flex-grow pb-10 px-4 sm:px-6 lg:px-8"> 
         <div className="flex flex-col justify-center items-center py-4">
-          <img src={leaderboardPicture} className="w-24 sm:w-32 md:w-40 lg:w-48 mx-auto" alt="Leaderboard" />
+          <img src={leaderboardPicture} className="w-24 sm:w-32 md:w-40 lg:w-48 mx-auto " alt="Leaderboard" />
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold mx-auto text-center mt-4">Worldwide Aura Leaderboard</h1>
           
-          <div className="mt-8 w-full max-w-xl mx-auto border border-gray-300 rounded-t-3xl shadow-custom p-4 relative z-10">
+          <div className="mt-8 w-full max-w-xl mx-auto border border-gray-300 rounded-t-3xl shadow-custom p-4 relative z-10 bg-white">
             <div className="relative">
               <div className="flex flex-col">
                 {leaderboardData.map((entry, index) => (
