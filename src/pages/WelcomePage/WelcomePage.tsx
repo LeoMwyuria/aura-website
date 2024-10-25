@@ -77,6 +77,7 @@ const WelcomePage = () => {
           </div>
 
           <Button 
+            onClick={toSignUpClick}
             label={"Claim Your Aura"}
             className="text-white font-semibold bg-black text-sm flex items-center justify-center px-3 py-1.5 rounded-2xl hover:cursor-pointer hover:bg-gray-700 w-full sm:w-auto mt-4 mx-auto"
           />
