@@ -9,10 +9,11 @@ import ProfilePictureUpload from '../ProfilePictureUpload/ProfilePictureUpload';
 import { firestore } from '../../firebase';
 import editProfile from '../../assets/user-edit.png';
 import logOutIcon from '../../assets/logOut.png';
-
+import adminLogo from '../../assets/adminLogo.png'
 const DashboardHeader: React.FC = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfilePicModalOpen, setIsProfilePicModalOpen] = useState(false);
@@ -34,6 +35,7 @@ const DashboardHeader: React.FC = () => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
+          setUserEmail(user.email);
           const userRef = doc(firestore, `users/${user.uid}`);
           const snapshot = await getDoc(userRef);
           if (snapshot.exists()) {
@@ -58,6 +60,7 @@ const DashboardHeader: React.FC = () => {
       } else {
         setUserName(null);
         setProfilePicUrl(null);
+        setUserEmail(null);
       }
     });
 
@@ -83,6 +86,11 @@ const DashboardHeader: React.FC = () => {
 
   const toLeaderboardsClick = () => {
     navigate('/leaderboard');
+  };
+
+  const toAdminPanel = () => {
+    navigate('/adminpanel');
+    setIsMenuOpen(false);
   };
 
   const handleLogoutClick = async () => {
@@ -120,7 +128,7 @@ const DashboardHeader: React.FC = () => {
     <div className="py-2">
       {isMobile && (
         <>
-        <a
+          <a
             onClick={handleLogoClick}
             className="block text-gray-800 font-semibold text-lg py-2 hover:bg-gray-100 cursor-pointer"
           >
@@ -139,6 +147,12 @@ const DashboardHeader: React.FC = () => {
             Top Aura Moments
           </a>
         </>
+      )}
+      {userEmail === 'hellopantha80@gmail.com' && (
+        <div onClick={toAdminPanel} className="flex items-center text-lg py-2 hover:bg-gray-100 cursor-pointer">
+          <img src={adminLogo} alt="Edit Profile" className="w-5 h-5 mr-2" />
+          <span className="text-gray-800 font-semibold">Admin Panel</span>
+        </div>
       )}
       <div onClick={openProfilePicModal} className="flex items-center text-lg py-2 hover:bg-gray-100 cursor-pointer">
         <img src={editProfile} alt="Edit Profile" className="w-5 h-5 mr-2" />
@@ -192,12 +206,12 @@ const DashboardHeader: React.FC = () => {
                   ref={menuRef}
                   className="p-3 absolute right-0 mt-10 sm:mt-[100%] w-40 sm:w-48 bg-white border-2 border-gray-300 rounded-3xl shadow-lg font-bold"
                 >
-                   <button
-              onClick={() => setIsMenuOpen(false)}
-              className="absolute top-2 right-2 text-gray-600 bg-transparent border-none cursor-pointer"
-            >
-              &times;
-            </button>
+                  <button
+                    onClick={() => setIsMenuOpen(false)}
+                    className="absolute top-2 right-2 text-gray-600 bg-transparent border-none cursor-pointer"
+                  >
+                    &times;
+                  </button>
                   {renderMenu()}
                 </div>
               )}

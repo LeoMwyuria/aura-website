@@ -260,7 +260,7 @@ const App: React.FC = () => {
                 </ul>
               </div>
             </div>
-            <div className="bg-white shadow-md p-4 sm:p-6 rounded-3xl col-span-1 row-span-1 max-h-[90%]">
+            <div className="bg-white shadow-md p-4 sm:p-6 rounded-3xl col-span-1 row-span-1 max-h-[100%]">
               <p className="font-bold text-gray-700 text-left">Last month you had</p>
               <div className="flex items-center space-x-2 sm:space-x-4">
                 <p className={`text-2xl sm:text-4xl font-extrabold flex items-center`}>

@@ -184,7 +184,7 @@ const SignUp: React.FC = () => {
                         )}
                     </Formik>
                 </div>
-                <img className='absolute left-[60%] hidden lg:block w-[35%]' src={lionImage} alt="Lion" />
+                <img  src={lionImage} alt="Lion" />
             </div>
         </>
     );
