@@ -89,7 +89,7 @@ const SignUp: React.FC = () => {
         <>
             <SignUpHeader />
             <div className="mx-auto mt-5 p-4 sm:p-6 md:p-8 lg:p-10 w-full sm:w-[90%] md:w-[80%] min-h-[80vh] flex  items-center justify-center">
-                <div className="bg-white border-gray-400 shadow-custom w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] flex flex-col justify-center p-4 sm:p-6 md:p-8 rounded-3xl mx-auto">
+                <div className="bg-white border-gray-400 shadow-custom-shadow w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] flex flex-col justify-center p-4 sm:p-6 md:p-8 rounded-3xl mx-auto">
                     <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 mx-auto font-bold">Get Started</h2>
                     <Formik
                         initialValues={{ email: '', password: '', repeatPassword: '', username: '' }}

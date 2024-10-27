@@ -55,8 +55,8 @@ const Login: React.FC = () => {
     return (
         <>
             <LogInHeader />
-            <div className="mx-auto mt-5 p-4 sm:p-6 md:p-8 lg:p-10 w-full sm:w-[90%] md:w-[80%] min-h-[80vh] flex flex-col items-center justify-center">
-                <div className="bg-white border-gray-400 shadow-custom w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] flex flex-col justify-center p-4 sm:p-6 md:p-8 rounded-3xl mx-auto">
+            <div className="mx-auto  mt-5 p-4 sm:p-6 md:p-8 lg:p-10 w-full sm:w-[90%] md:w-[80%] min-h-[80vh] flex flex-col items-center justify-center">
+                <div className="bg-white border-gray-400 shadow-custom-shadow w-full sm:w-[80%] md:w-[60%] lg:w-[50%] xl:w-[40%] flex flex-col justify-center p-4 sm:p-6 md:p-8 rounded-3xl mx-auto">
                     <h2 className="text-2xl sm:text-3xl mb-6 sm:mb-8 mx-auto font-bold">Your Aura is Waiting...</h2>
                     <Formik
                         initialValues={{ email: '', password: '' }}
@@ -79,7 +79,7 @@ const Login: React.FC = () => {
                         {({ isSubmitting, isValid, dirty }) => (
                             <Form className="flex flex-col">
                                 <label className="mb-2 sm:mb-3 font-bold" htmlFor="email">Email</label>
-                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl transition-all duration-200">
                                     <img src={emailIcon} alt="Email Icon" className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                     <Field
                                         id="email"
@@ -92,7 +92,7 @@ const Login: React.FC = () => {
                                 </div>
 
                                 <label className="mb-2 sm:mb-3 font-bold" htmlFor="password">Password</label>
-                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl">
+                                <div className="relative flex items-center mb-4 sm:mb-5 p-2 sm:p-3 border border-gray-400 shadow-custom rounded-3xl transition-all duration-200">
                                     <img src={passwordIcon} alt="Password Icon" className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                     <Field
                                         id="password"

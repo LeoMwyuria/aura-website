@@ -10,6 +10,17 @@ input {
   outline: 0;
 }
 
+
+.shadow-custom {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.shadow-custom:focus-within {
+  box-shadow: 0 0 0 2px #DA58CD40, 0 2px 4px #DA58CD40;
+  border-color: #DA58CD;
+}
+
 body {
   background-color: white;
   background-image: url('./assets/AuraBackground.png');
