@@ -10,7 +10,6 @@ import { getDatabase, ref,  set } from "firebase/database";
 import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css';
 import SignUpHeader from '../../components/Header/SignUpHeader';
-import lionImage from '../../assets/lion.png'
 
 interface FormValues {
     email: string;
@@ -184,7 +183,6 @@ const SignUp: React.FC = () => {
                         )}
                     </Formik>
                 </div>
-                <img  src={lionImage} alt="Lion" />
             </div>
         </>
     );
