@@ -1,50 +1,44 @@
-# React + TypeScript + Vite
+# Aura Website
+A dynamic and visually appealing aura tracking application built with React, featuring real-time updates, historical tracking, and smooth animations.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 **Features**
+- 🔄 **Real-time Updates** – Seamless aura value updates without page reloads.
+- 📊 **Historical Tracking** – View aura values from 30 days ago (or '0' if unavailable).
+- 📈 **Data Visualization** – Beautiful charts using Chart.js.
+- 👥 **Friend Network** – Displays messages when no friends are in the network.
+- 🔐 **Firebase Authentication** – Secure login and user management.
+- 🎨 **Smooth UI** – Styled with Tailwind CSS for a modern look.
 
-Currently, two official plugins are available:
+🛠️ **Technologies Used**
+- **React** – Component-based UI development.
+- **TypeScript** – Ensuring type safety.
+- **Chart.js** – Interactive data visualization.
+- **Firebase** – Authentication and database.
+- **Tailwind CSS** – Fast and customizable styling.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+⚡ **Getting Started**
+Follow these steps to set up the project locally:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+1️⃣ **Clone the Repository**
+```sh
+git clone https://github.com/yourusername/aura-website.git
+cd aura-website
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2️⃣ **Install Dependencies**
+```sh
+npm install
+```
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+3️⃣ **Set Up Environment Variables**
+Create a `.env` file in the root directory and add your Firebase credentials:
+```sh
+REACT_APP_FIREBASE_API_KEY=your_api_key
+REACT_APP_FIREBASE_AUTH_DOMAIN=your_auth_domain
+REACT_APP_FIREBASE_PROJECT_ID=your_project_id
+```
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+4️⃣ **Start the Development Server**
+```sh
+npm run dev
 ```
